@@ -7,7 +7,7 @@ This tracker records implementation progress for PageStrider.
 - Documentation created: yes
 - App implementation: foundation started
 - Dependencies installed: yes
-- UI created: minimal Next.js shell only
+- UI created: Phase 2 Today flow
 - Vercel project: created and linked
 - Supabase local config: initialized
 - Supabase CLI: authenticated
@@ -21,7 +21,7 @@ This tracker records implementation progress for PageStrider.
 | Phase | Status | Notes |
 | --- | --- | --- |
 | Phase 1: Foundation | Complete | Next.js/TypeScript/Vitest scaffold, shared types, constants, calculation utilities, tests, data-access contracts, and theme boundary. |
-| Phase 2: Books and Today page | Not started | Book creation, one active book, today entry, validation, and current book progress update. |
+| Phase 2: Books and Today page | Complete | Supabase-backed active book setup, Today entry, validation, duplicate-day guard, and current book progress update. |
 | Phase 3: History and Calendar | Not started | Reading history, calendar/day highlighting, and day details. |
 | Phase 4: Streaks, Metrics, and Badges | Not started | Utility-backed streaks, metrics surfaces, and computed badges. |
 | Phase 5: Teacher Report | Not started | Date range selector, print-friendly report page, summary metrics, reading table, and print CSS. |
@@ -44,10 +44,10 @@ This tracker records implementation progress for PageStrider.
 
 ## Next Recommended Step
 
-Start Phase 2 in a new chat by reading:
+Start Phase 3 in a new chat by reading:
 
 - `PROJECT.md`
 - `docs/IMPLEMENTATION_STATUS.md`
 - `docs/INFRASTRUCTURE.md`
 - `docs/codex-phases/00-context.md`
-- `docs/codex-phases/02-books-and-today.md`
+- `docs/codex-phases/03-history-and-calendar.md`

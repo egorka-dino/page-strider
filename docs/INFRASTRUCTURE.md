@@ -12,6 +12,7 @@ This file tracks infrastructure setup for PageStrider.
 - Supabase local config: initialized.
 - Supabase CLI: authenticated.
 - Supabase remote project: linked.
+- Supabase Phase 2 schema migration: applied.
 - Supabase project name: `Page Strider`.
 - Supabase project ref: `mszcmtqkfanijrypcwvd`.
 - Supabase region: `eu-west-1`.
@@ -34,6 +35,7 @@ npx vercel@latest env pull .env.local --yes
 ## Supabase
 
 Supabase remains the recommended MVP database choice. Phase 1 added only repository contracts; later phases should add the Supabase implementation behind those contracts instead of calling Supabase directly from UI components.
+Phase 2 added the first application schema and a Supabase-backed data-access implementation for settings, the reader profile, books, and reading entries.
 
 Supabase CLI was initialized with:
 
@@ -86,9 +88,8 @@ Do not commit real secret values.
 
 ## Remaining Setup
 
-1. Use Supabase client APIs for the first MVP data-access layer.
-2. Add `DATABASE_URL` only if a future phase introduces direct server-side SQL or an ORM.
-3. If `DATABASE_URL` is added later, use the Supabase dashboard database password or connection string and do not commit it.
+1. Add `DATABASE_URL` only if a future phase introduces direct server-side SQL or an ORM.
+2. If `DATABASE_URL` is added later, use the Supabase dashboard database password or connection string and do not commit it.
 
 ## Notes
 

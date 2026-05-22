@@ -8,6 +8,9 @@
   --ps-success: #4f8f46;
   --ps-warning: #c7872f;
   --ps-badge: #d35f5f;
+  --ps-radius-panel: 0.5rem;
+  --ps-radius-control: 0.375rem;
+  --ps-shadow-panel: 0 14px 40px color-mix(in srgb, var(--ps-ink) 12%, transparent);
 }
 
 * {
@@ -27,4 +30,230 @@ body {
     Arial,
     Helvetica,
     sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: var(--ps-radius-control, 0.375rem);
+  background: var(--ps-accent);
+  color: var(--ps-accent-ink);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.85rem 1.1rem;
+}
+
+button:hover {
+  filter: brightness(0.96);
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--ps-ink) 18%, transparent);
+  border-radius: var(--ps-radius-control, 0.375rem);
+  background: #fffdf7;
+  color: var(--ps-ink);
+  padding: 0.7rem 0.8rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--ps-muted-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.app-shell {
+  display: grid;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 1040px;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.hero-panel,
+.book-panel,
+.entry-panel,
+.setup-panel {
+  border: 1px solid color-mix(in srgb, var(--ps-ink) 10%, transparent);
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  background: var(--ps-paper);
+  box-shadow: var(--ps-shadow-panel, 0 14px 40px color-mix(in srgb, var(--ps-ink) 12%, transparent));
+}
+
+.hero-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.hero-panel h1,
+.book-panel h2,
+.entry-panel h2,
+.setup-panel h2 {
+  margin: 0;
+}
+
+.hero-panel h1 {
+  font-size: clamp(2.2rem, 7vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.hero-copy,
+.muted,
+.form-hint {
+  color: var(--ps-muted-ink);
+}
+
+.hero-copy {
+  margin: 0.75rem 0 0;
+  max-width: 34rem;
+}
+
+.eyebrow {
+  color: var(--ps-accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.goal-token {
+  align-items: center;
+  aspect-ratio: 1;
+  background: color-mix(in srgb, var(--ps-accent) 12%, var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 24%, transparent);
+  border-radius: 999px;
+  display: grid;
+  flex: 0 0 8rem;
+  justify-items: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.goal-token span {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.goal-token small {
+  color: var(--ps-muted-ink);
+  font-weight: 700;
+}
+
+.notice {
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  font-weight: 700;
+  margin: 0;
+  padding: 0.9rem 1rem;
+}
+
+.notice.success {
+  background: color-mix(in srgb, var(--ps-success) 18%, var(--ps-paper));
+}
+
+.notice.warning {
+  background: color-mix(in srgb, var(--ps-warning) 22%, var(--ps-paper));
+}
+
+.reading-layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.85fr);
+}
+
+.book-panel,
+.entry-panel,
+.setup-panel {
+  padding: 1.5rem;
+}
+
+.progress-track {
+  background: color-mix(in srgb, var(--ps-accent) 12%, var(--ps-page));
+  border-radius: 999px;
+  height: 0.8rem;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+.progress-track div {
+  background: var(--ps-accent);
+  height: 100%;
+}
+
+.book-stats {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.book-stats div {
+  background: color-mix(in srgb, var(--ps-page) 70%, var(--ps-paper));
+  border-radius: var(--ps-radius-control, 0.375rem);
+  padding: 0.8rem;
+}
+
+.book-stats dt {
+  color: var(--ps-muted-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.book-stats dd {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0.2rem 0 0;
+}
+
+.stacked-form,
+.book-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.book-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.book-form button {
+  align-self: end;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 1rem;
+  }
+
+  .hero-panel,
+  .reading-layout,
+  .book-form {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-panel {
+    display: grid;
+  }
+
+  .goal-token {
+    aspect-ratio: auto;
+    border-radius: var(--ps-radius-panel, 0.5rem);
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    width: 100%;
+  }
 }
