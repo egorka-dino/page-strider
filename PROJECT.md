@@ -290,6 +290,7 @@ The report should look good on A4 paper.
 ## Engineering Principles
 
 - Code and comments must be in English.
+- User-facing interface copy must be Russian-language only, including labels, buttons, validation messages, placeholders, helper text, and metadata descriptions.
 - Keep business logic in utility functions, not directly inside UI components.
 - Keep persistence behind a small data-access layer so the database provider can later be replaced.
 - Prefer TypeScript types for core entities and calculation inputs.

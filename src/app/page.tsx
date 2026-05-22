@@ -7,22 +7,23 @@ import {
 import { createSupabaseDataAccess } from "@/data";
 
 import { createBookAction, recordTodayAction } from "./actions";
+import { UI_COPY } from "./ui-copy";
 
 export const dynamic = "force-dynamic";
 
 const errorMessages: Record<string, string> = {
-  book_details_required: "Add a title and author to start the reading trail.",
-  invalid_book_pages: "Check the book pages. The current page must fit inside the book.",
-  missing_active_book: "Add an active book before recording today's pages.",
-  entry_exists: "Today's reading is already recorded.",
-  end_before_start: "The finished page must be after the last page already read.",
-  end_after_total: "The finished page cannot be beyond the end of the book.",
-  invalid_book: "The active book needs valid page details before recording reading."
+  book_details_required: UI_COPY.errors.bookDetailsRequired,
+  invalid_book_pages: UI_COPY.errors.invalidBookPages,
+  missing_active_book: UI_COPY.errors.missingActiveBook,
+  entry_exists: UI_COPY.errors.entryExists,
+  end_before_start: UI_COPY.errors.endBeforeStart,
+  end_after_total: UI_COPY.errors.endAfterTotal,
+  invalid_book: UI_COPY.errors.invalidBook
 };
 
 const messageText: Record<string, string> = {
-  book_created: "Book saved. The next page is ready.",
-  entry_saved: "Today's reading is saved."
+  book_created: UI_COPY.messages.bookCreated,
+  entry_saved: UI_COPY.messages.entrySaved
 };
 
 export default async function Home({
@@ -45,15 +46,15 @@ export default async function Home({
     <main className="app-shell">
       <section className="hero-panel">
         <div>
-          <p className="eyebrow">Today&apos;s reading trail</p>
-          <h1>PageStrider</h1>
+          <p className="eyebrow">{UI_COPY.hero.eyebrow}</p>
+          <h1>{UI_COPY.hero.title}</h1>
           <p className="hero-copy">
-            Keep one active book moving, one clear page step at a time.
+            {UI_COPY.hero.copy}
           </p>
         </div>
         <div className="goal-token">
           <span>{settings.dailyGoalPages}</span>
-          <small>page goal</small>
+          <small>{UI_COPY.hero.goalLabel}</small>
         </div>
       </section>
 
@@ -94,25 +95,27 @@ function TodayPanel({
   return (
     <section className="reading-layout">
       <article className="book-panel">
-        <p className="eyebrow">Active book</p>
+        <p className="eyebrow">{UI_COPY.today.activeBookEyebrow}</p>
         <h2>{activeBook.title}</h2>
-        <p className="muted">by {activeBook.author}</p>
+        <p className="muted">
+          {UI_COPY.today.authorPrefix} {activeBook.author}
+        </p>
 
-        <div className="progress-track" aria-label={`${progressPercent}% complete`}>
+        <div className="progress-track" aria-label={UI_COPY.today.progressLabel(progressPercent)}>
           <div style={{ width: `${progressPercent}%` }} />
         </div>
 
         <dl className="book-stats">
           <div>
-            <dt>Read</dt>
+            <dt>{UI_COPY.today.readStat}</dt>
             <dd>{progress.readPages}</dd>
           </div>
           <div>
-            <dt>Left</dt>
+            <dt>{UI_COPY.today.leftStat}</dt>
             <dd>{pagesLeft}</dd>
           </div>
           <div>
-            <dt>Done</dt>
+            <dt>{UI_COPY.today.doneStat}</dt>
             <dd>{progressPercent}%</dd>
           </div>
         </dl>
@@ -121,19 +124,19 @@ function TodayPanel({
       <article className="entry-panel">
         {todayEntry ? (
           <>
-            <p className="eyebrow">Saved today</p>
-            <h2>{todayEntry.pagesRead} pages logged</h2>
+            <p className="eyebrow">{UI_COPY.today.savedEyebrow}</p>
+            <h2>{UI_COPY.today.pagesLogged(todayEntry.pagesRead)}</h2>
             <p className="muted">
-              Pages {todayEntry.startPage}-{todayEntry.endPage} are recorded for today.
+              {UI_COPY.today.pageRangeRecorded(todayEntry.startPage, todayEntry.endPage)}
             </p>
           </>
         ) : (
           <>
-            <p className="eyebrow">Next step</p>
-            <h2>Start on page {nextPage}</h2>
+            <p className="eyebrow">{UI_COPY.today.nextStepEyebrow}</p>
+            <h2>{UI_COPY.today.startOnPage(nextPage)}</h2>
             <form action={recordTodayAction} className="stacked-form">
               <label>
-                Finished page
+                {UI_COPY.today.finishedPageLabel}
                 <input
                   name="finishedPage"
                   type="number"
@@ -143,13 +146,13 @@ function TodayPanel({
                 />
               </label>
               <label>
-                Note
-                <textarea name="note" rows={3} placeholder="Optional" />
+                {UI_COPY.today.noteLabel}
+                <textarea name="note" rows={3} placeholder={UI_COPY.today.notePlaceholder} />
               </label>
               <p className="form-hint">
-                Goal today: {dailyGoalPages} pages. The entry will be saved for this date.
+                {UI_COPY.today.formHint(dailyGoalPages)}
               </p>
-              <button type="submit">Save today</button>
+              <button type="submit">{UI_COPY.today.saveButton}</button>
             </form>
           </>
         )}
@@ -161,34 +164,34 @@ function TodayPanel({
 function BookSetupPanel({ today }: { today: string }) {
   return (
     <section className="setup-panel">
-      <p className="eyebrow">First book</p>
-      <h2>Set the active book</h2>
+      <p className="eyebrow">{UI_COPY.bookSetup.eyebrow}</p>
+      <h2>{UI_COPY.bookSetup.heading}</h2>
       <form action={createBookAction} className="book-form">
         <label>
-          Title
+          {UI_COPY.bookSetup.titleLabel}
           <input name="title" required />
         </label>
         <label>
-          Author
+          {UI_COPY.bookSetup.authorLabel}
           <input name="author" required />
         </label>
         <label>
-          Total pages
+          {UI_COPY.bookSetup.totalPagesLabel}
           <input name="totalPages" type="number" min="1" required />
         </label>
         <label>
-          First readable page
+          {UI_COPY.bookSetup.startPageLabel}
           <input name="startPage" type="number" min="1" defaultValue="1" required />
         </label>
         <label>
-          Last page already read
+          {UI_COPY.bookSetup.currentPageLabel}
           <input name="currentPage" type="number" min="1" defaultValue="1" required />
         </label>
         <label>
-          Started date
+          {UI_COPY.bookSetup.startedDateLabel}
           <input name="startedDate" type="date" defaultValue={today} required />
         </label>
-        <button type="submit">Start book</button>
+        <button type="submit">{UI_COPY.bookSetup.submitButton}</button>
       </form>
     </section>
   );
