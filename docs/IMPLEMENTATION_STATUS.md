@@ -1,13 +1,13 @@
 # PageStrider Implementation Status
 
-This tracker records implementation progress for PageStrider. No app features have been implemented yet.
+This tracker records implementation progress for PageStrider.
 
 ## Current Status
 
 - Documentation created: yes
-- App implementation: not started
-- Dependencies installed: no
-- UI created: no
+- App implementation: foundation started
+- Dependencies installed: yes
+- UI created: minimal Next.js shell only
 - Vercel project: created and linked
 - Supabase local config: initialized
 - Supabase CLI: authenticated
@@ -20,7 +20,7 @@ This tracker records implementation progress for PageStrider. No app features ha
 
 | Phase | Status | Notes |
 | --- | --- | --- |
-| Phase 1: Foundation | Not started | Shared types, constants, calculation utilities, and tests if a test setup exists. |
+| Phase 1: Foundation | Complete | Next.js/TypeScript/Vitest scaffold, shared types, constants, calculation utilities, tests, data-access contracts, and theme boundary. |
 | Phase 2: Books and Today page | Not started | Book creation, one active book, today entry, validation, and current book progress update. |
 | Phase 3: History and Calendar | Not started | Reading history, calendar/day highlighting, and day details. |
 | Phase 4: Streaks, Metrics, and Badges | Not started | Utility-backed streaks, metrics surfaces, and computed badges. |
@@ -44,9 +44,10 @@ This tracker records implementation progress for PageStrider. No app features ha
 
 ## Next Recommended Step
 
-Start Phase 1 in a new chat by reading:
+Start Phase 2 in a new chat by reading:
 
 - `PROJECT.md`
 - `docs/IMPLEMENTATION_STATUS.md`
+- `docs/INFRASTRUCTURE.md`
 - `docs/codex-phases/00-context.md`
-- `docs/codex-phases/01-foundation.md`
+- `docs/codex-phases/02-books-and-today.md`

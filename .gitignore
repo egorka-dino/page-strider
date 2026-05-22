@@ -1,5 +1,17 @@
 .vercel
 
+# Dependencies
+node_modules
+
+# Next.js
+.next
+out
+
+# Test and build output
+coverage
+dist
+*.tsbuildinfo
+
 # Local environment files
 .env
 .env.local

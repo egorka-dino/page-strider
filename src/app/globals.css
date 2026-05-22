@@ -1,0 +1,30 @@
+:root {
+  --ps-page: #f6efe3;
+  --ps-paper: #fffaf0;
+  --ps-ink: #24302f;
+  --ps-muted-ink: #687271;
+  --ps-accent: #2f7d6d;
+  --ps-accent-ink: #ffffff;
+  --ps-success: #4f8f46;
+  --ps-warning: #c7872f;
+  --ps-badge: #d35f5f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ps-page);
+  color: var(--ps-ink);
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}

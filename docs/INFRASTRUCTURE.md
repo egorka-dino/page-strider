@@ -33,6 +33,8 @@ npx vercel@latest env pull .env.local --yes
 
 ## Supabase
 
+Supabase remains the recommended MVP database choice. Phase 1 added only repository contracts; later phases should add the Supabase implementation behind those contracts instead of calling Supabase directly from UI components.
+
 Supabase CLI was initialized with:
 
 ```bash
