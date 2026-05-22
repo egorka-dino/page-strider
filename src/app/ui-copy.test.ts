@@ -4,14 +4,28 @@ import { UI_COPY } from "./ui-copy";
 
 describe("UI copy", () => {
   it("uses Russian copy for the visible PageStrider interface", () => {
-    expect(UI_COPY.hero.eyebrow).toBe("Читательский маршрут на сегодня");
-    expect(UI_COPY.bookSetup.heading).toBe("Добавьте активную книгу");
-    expect(UI_COPY.today.finishedPageLabel).toBe("Страница, на которой остановились");
-    expect(UI_COPY.messages.entrySaved).toBe("Сегодняшнее чтение сохранено.");
+    expect(UI_COPY.hero.eyebrow).toBe("Книжный квест дня");
+    expect(UI_COPY.bookSetup.heading).toBe("Выберите книгу для первого квеста");
+    expect(UI_COPY.today.finishedPageLabel).toBe("До какой страницы дошли?");
+    expect(UI_COPY.messages.entrySaved).toBe("Квест дня сохранен. Отличный рывок!");
   });
 
   it("keeps validation messages in Russian", () => {
     expect(Object.values(UI_COPY.errors).join(" ")).toContain("книг");
     expect(Object.values(UI_COPY.errors).join(" ")).toContain("страниц");
+  });
+
+  it("uses motivating game-like language without adding later-phase features", () => {
+    const visibleCopy = [
+      UI_COPY.hero.copy,
+      UI_COPY.hero.pathLabel,
+      UI_COPY.today.nextStepEyebrow,
+      UI_COPY.today.saveButton,
+      UI_COPY.bookSetup.submitButton
+    ].join(" ");
+
+    expect(visibleCopy).toContain("квест");
+    expect(visibleCopy).toContain("маршрут");
+    expect(visibleCopy).toContain("рывок");
   });
 });

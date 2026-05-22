@@ -3,53 +3,55 @@ export const UI_COPY = {
     description: "Небольшой читательский дневник для одного читателя."
   },
   hero: {
-    eyebrow: "Читательский маршрут на сегодня",
+    eyebrow: "Книжный квест дня",
     title: "PageStrider",
-    copy: "Ведите одну активную книгу вперед, по одному понятному шагу за раз.",
-    goalLabel: "цель в страницах"
+    copy: "Каждый день открывает новый отрезок маршрута: прочитайте страницы, сохраните рывок и двигайтесь к финишу книги.",
+    goalLabel: "цель квеста",
+    pathLabel: "Маршрут чтения",
+    pathSteps: ["Старт", "Рывок", "Награда"]
   },
   messages: {
-    bookCreated: "Книга сохранена. Следующая страница уже ждет.",
-    entrySaved: "Сегодняшнее чтение сохранено."
+    bookCreated: "Книга добавлена. Первый квест готов!",
+    entrySaved: "Квест дня сохранен. Отличный рывок!"
   },
   errors: {
-    bookDetailsRequired: "Добавьте название и автора, чтобы начать маршрут.",
-    invalidBookPages: "Проверьте страницы книги. Текущая страница должна быть внутри книги.",
-    missingActiveBook: "Сначала добавьте активную книгу.",
-    entryExists: "Чтение за сегодня уже записано.",
-    endBeforeStart: "Страница остановки должна быть после последней уже прочитанной страницы.",
-    endAfterTotal: "Страница остановки не может быть дальше конца книги.",
-    invalidBook: "Перед записью чтения нужны корректные данные книги."
+    bookDetailsRequired: "Добавьте название и автора, чтобы открыть книжный квест.",
+    invalidBookPages: "Проверьте страницы книги: маршрут должен помещаться внутри книги.",
+    missingActiveBook: "Сначала выберите активную книгу для квеста.",
+    entryExists: "Квест за сегодня уже засчитан.",
+    endBeforeStart: "Финиш рывка должен быть после последней уже прочитанной страницы.",
+    endAfterTotal: "Финиш рывка не может быть дальше конца книги.",
+    invalidBook: "Перед стартом нужны корректные данные книги."
   },
   today: {
-    activeBookEyebrow: "Активная книга",
+    activeBookEyebrow: "Текущий маршрут",
     authorPrefix: "автор:",
     progressLabel: (progressPercent: number) => `Готово на ${progressPercent}%`,
-    readStat: "Прочитано",
-    leftStat: "Осталось",
-    doneStat: "Готово",
-    savedEyebrow: "Сегодня записано",
-    pagesLogged: (pagesRead: number) => `${pagesRead} стр. записано`,
+    readStat: "Пройдено",
+    leftStat: "До финиша",
+    doneStat: "Прогресс",
+    savedEyebrow: "Квест засчитан",
+    pagesLogged: (pagesRead: number) => `+${pagesRead} стр. к маршруту`,
     pageRangeRecorded: (startPage: number, endPage: number) =>
-      `Страницы ${startPage}-${endPage} записаны за сегодня.`,
-    nextStepEyebrow: "Следующий шаг",
-    startOnPage: (nextPage: number) => `Начните со страницы ${nextPage}`,
-    finishedPageLabel: "Страница, на которой остановились",
-    noteLabel: "Заметка",
-    notePlaceholder: "Необязательно",
+      `Сегодня пройден отрезок ${startPage}-${endPage}.`,
+    nextStepEyebrow: "Рывок дня",
+    startOnPage: (nextPage: number) => `Стартуйте со страницы ${nextPage}`,
+    finishedPageLabel: "До какой страницы дошли?",
+    noteLabel: "Заметка к рывку",
+    notePlaceholder: "Что было самым интересным?",
     formHint: (dailyGoalPages: number) =>
-      `Цель на сегодня: ${dailyGoalPages} стр. Запись будет сохранена за эту дату.`,
-    saveButton: "Сохранить сегодня"
+      `Цель квеста: ${dailyGoalPages} стр. Если дошли дальше - маршрут получит мощный бонус.`,
+    saveButton: "Засчитать рывок"
   },
   bookSetup: {
-    eyebrow: "Первая книга",
-    heading: "Добавьте активную книгу",
+    eyebrow: "Старт маршрута",
+    heading: "Выберите книгу для первого квеста",
     titleLabel: "Название",
     authorLabel: "Автор",
-    totalPagesLabel: "Всего страниц",
-    startPageLabel: "Первая читаемая страница",
-    currentPageLabel: "Последняя уже прочитанная страница",
+    totalPagesLabel: "Сколько страниц в книге?",
+    startPageLabel: "Где начинается маршрут?",
+    currentPageLabel: "Где сейчас закладка?",
     startedDateLabel: "Дата начала",
-    submitButton: "Начать книгу"
+    submitButton: "Открыть квест"
   }
 } as const;

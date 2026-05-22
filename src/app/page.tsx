@@ -56,6 +56,11 @@ export default async function Home({
           <span>{settings.dailyGoalPages}</span>
           <small>{UI_COPY.hero.goalLabel}</small>
         </div>
+        <div className="quest-path" aria-label={UI_COPY.hero.pathLabel}>
+          {UI_COPY.hero.pathSteps.map((step) => (
+            <span key={step}>{step}</span>
+          ))}
+        </div>
       </section>
 
       {error ? <p className="notice warning">{errorMessages[error] ?? error}</p> : null}
