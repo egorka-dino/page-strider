@@ -10,8 +10,10 @@ This tracker records implementation progress for PageStrider. No app features ha
 - UI created: no
 - Vercel project: created and linked
 - Supabase local config: initialized
-- Supabase remote project: blocked until Supabase CLI is authenticated
-- Database added: no remote database yet
+- Supabase CLI: authenticated
+- Supabase remote project: linked
+- Vercel Supabase env vars: added for Production, Preview, and Development
+- Database connection string: pending
 - Authentication added: no
 
 ## Phase Progress

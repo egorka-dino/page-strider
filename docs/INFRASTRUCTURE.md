@@ -10,7 +10,13 @@ This file tracks infrastructure setup for PageStrider.
 - Vercel framework preset: `Other` until the app is scaffolded.
 - GitHub repository: connected by Vercel CLI.
 - Supabase local config: initialized.
-- Supabase remote project: not created yet because Supabase CLI is not authenticated.
+- Supabase CLI: authenticated.
+- Supabase remote project: linked.
+- Supabase project name: `Page Strider`.
+- Supabase project ref: `mszcmtqkfanijrypcwvd`.
+- Supabase region: `eu-west-1`.
+- Vercel env vars: Supabase URL, anon key, and service role key added for Production, Preview, and Development.
+- Database connection string: pending.
 
 ## Vercel
 
@@ -39,19 +45,19 @@ The local Supabase configuration lives in:
 supabase/config.toml
 ```
 
-Remote Supabase project creation still requires authentication. Use one of these options:
+Supabase CLI authentication was completed with:
 
 ```bash
 npx supabase@latest login
 ```
 
-or set:
+The local project was linked to the remote Supabase project:
 
 ```bash
-SUPABASE_ACCESS_TOKEN
+npx supabase@latest link --project-ref mszcmtqkfanijrypcwvd
 ```
 
-After authentication, create or link the remote project, then add the resulting environment variables to Vercel and pull them locally.
+The linked project metadata lives under `supabase/.temp/`, which is ignored by `supabase/.gitignore`.
 
 ## Expected Environment Variables
 
@@ -64,7 +70,21 @@ Required Supabase-related keys:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `DATABASE_URL`
 
+Current Vercel status:
+
+- `NEXT_PUBLIC_SUPABASE_URL`: added to Production, Preview, and Development.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: added to Production, Preview, and Development.
+- `SUPABASE_SERVICE_ROLE_KEY`: added to Production, Preview, and Development.
+- `DATABASE_URL`: not added yet.
+
 Do not commit real secret values.
+
+## Remaining Setup
+
+1. Decide how the app will connect to Postgres:
+   - use Supabase client APIs first, or
+   - add a server-side Postgres connection string when an ORM/direct SQL layer is introduced.
+2. Add `DATABASE_URL` to Vercel and `.env.local` only when the connection strategy is chosen.
 
 ## Notes
 
