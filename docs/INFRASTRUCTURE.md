@@ -16,7 +16,7 @@ This file tracks infrastructure setup for PageStrider.
 - Supabase project ref: `mszcmtqkfanijrypcwvd`.
 - Supabase region: `eu-west-1`.
 - Vercel env vars: Supabase URL, anon key, and service role key added for Production, Preview, and Development.
-- Database connection string: pending.
+- Direct Postgres connection string: not needed for the current Supabase-first MVP setup.
 
 ## Vercel
 
@@ -68,23 +68,25 @@ Required Supabase-related keys:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `DATABASE_URL`
+
+Optional later:
+
+- `DATABASE_URL`, only if the app adds direct server-side SQL or an ORM.
 
 Current Vercel status:
 
 - `NEXT_PUBLIC_SUPABASE_URL`: added to Production, Preview, and Development.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: added to Production, Preview, and Development.
 - `SUPABASE_SERVICE_ROLE_KEY`: added to Production, Preview, and Development.
-- `DATABASE_URL`: not added yet.
+- `DATABASE_URL`: not added because the MVP can use Supabase client APIs without a direct Postgres connection string.
 
 Do not commit real secret values.
 
 ## Remaining Setup
 
-1. Decide how the app will connect to Postgres:
-   - use Supabase client APIs first, or
-   - add a server-side Postgres connection string when an ORM/direct SQL layer is introduced.
-2. Add `DATABASE_URL` to Vercel and `.env.local` only when the connection strategy is chosen.
+1. Use Supabase client APIs for the first MVP data-access layer.
+2. Add `DATABASE_URL` only if a future phase introduces direct server-side SQL or an ORM.
+3. If `DATABASE_URL` is added later, use the Supabase dashboard database password or connection string and do not commit it.
 
 ## Notes
 

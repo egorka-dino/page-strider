@@ -13,7 +13,7 @@ This tracker records implementation progress for PageStrider. No app features ha
 - Supabase CLI: authenticated
 - Supabase remote project: linked
 - Vercel Supabase env vars: added for Production, Preview, and Development
-- Database connection string: pending
+- Direct Postgres connection string: not needed for current Supabase-first MVP setup
 - Authentication added: no
 
 ## Phase Progress
