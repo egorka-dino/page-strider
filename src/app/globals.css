@@ -95,7 +95,8 @@ label {
 .setup-panel,
 .history-panel,
 .progress-panel,
-.books-panel {
+.books-panel,
+.daily-goal-panel {
   border: 1px solid color-mix(in srgb, var(--ps-ink) 10%, transparent);
   border-radius: var(--ps-radius-panel, 0.5rem);
   background: var(--ps-paper);
@@ -266,7 +267,8 @@ label {
 .setup-panel,
 .history-panel,
 .progress-panel,
-.books-panel {
+.books-panel,
+.daily-goal-panel {
   padding: 1.5rem;
 }
 
@@ -324,14 +326,16 @@ label {
 
 .history-panel,
 .progress-panel,
-.books-panel {
+.books-panel,
+.daily-goal-panel {
   display: grid;
   gap: 1.25rem;
 }
 
 .history-heading,
 .progress-heading,
-.books-heading {
+.books-heading,
+.daily-goal-heading {
   align-items: end;
   display: flex;
   gap: 1rem;
@@ -340,7 +344,8 @@ label {
 
 .history-heading .muted,
 .progress-heading .muted,
-.books-heading .muted {
+.books-heading .muted,
+.daily-goal-heading .muted {
   max-width: 28rem;
   line-height: 1.5;
   margin: 0;
@@ -351,8 +356,83 @@ label {
 .badge-token h4,
 .books-panel h2,
 .books-panel h3,
+.daily-goal-panel h2,
+.daily-goal-panel h3,
 .shelf-book h4 {
   margin: 0;
+}
+
+.daily-goal-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(12rem, 0.7fr) minmax(0, 1.3fr);
+}
+
+.current-goal-card {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--ps-spark) 24%, var(--ps-paper)), var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-spark) 54%, var(--ps-ink) 10%);
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  display: grid;
+  gap: 0.4rem;
+  padding: 1rem;
+}
+
+.current-goal-card span,
+.current-goal-card p {
+  color: var(--ps-muted-ink);
+  font-weight: 800;
+  margin: 0;
+}
+
+.current-goal-card strong {
+  color: var(--ps-accent);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.goal-form,
+.goal-history-list,
+.goal-history-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.goal-form {
+  background: color-mix(in srgb, var(--ps-page) 68%, var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 14%, transparent);
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 1rem;
+}
+
+.goal-form h3,
+.goal-form label:last-of-type,
+.goal-form button {
+  grid-column: 1 / -1;
+}
+
+.goal-history {
+  color: var(--ps-muted-ink);
+}
+
+.goal-history summary {
+  color: var(--ps-ink);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.goal-history-list {
+  margin-top: 0.75rem;
+}
+
+.goal-history-row {
+  align-items: end;
+  background: color-mix(in srgb, var(--ps-page) 48%, var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 12%, transparent);
+  border-radius: var(--ps-radius-control, 0.375rem);
+  grid-template-columns: 0.8fr 1fr minmax(0, 1.4fr) auto;
+  padding: 0.75rem;
 }
 
 .books-grid {
@@ -968,29 +1048,36 @@ label {
     width: 100%;
   }
 
-  .history-heading,
-  .progress-heading,
-  .books-heading,
-  .streak-band {
+	  .history-heading,
+	  .progress-heading,
+	  .books-heading,
+	  .daily-goal-heading,
+	  .streak-band {
     align-items: start;
     display: grid;
   }
 
-  .history-calendar,
-  .badge-trail,
-  .metric-shelf,
-  .books-grid,
-  .report-summary {
+	  .history-calendar,
+	  .badge-trail,
+	  .metric-shelf,
+	  .books-grid,
+	  .daily-goal-grid,
+	  .goal-form,
+	  .goal-history-row,
+	  .report-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 520px) {
-  .history-calendar,
-  .badge-trail,
-  .metric-shelf,
-  .books-grid,
-  .report-summary {
+	  .history-calendar,
+	  .badge-trail,
+	  .metric-shelf,
+	  .books-grid,
+	  .daily-goal-grid,
+	  .goal-form,
+	  .goal-history-row,
+	  .report-summary {
     grid-template-columns: 1fr;
   }
 }

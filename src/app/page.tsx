@@ -4,8 +4,11 @@ import {
   calculateBookProgress,
   calculatePagesLeft,
   calculateReadingMetrics,
+  resolveDailyGoalsForEntries,
+  sortDailyGoalsDescending,
   type Badge,
   type Book,
+  type DailyGoal,
   type ReadingMetrics,
   type ReadingHistoryDay,
   type ReadingEntry
@@ -15,10 +18,12 @@ import Link from "next/link";
 
 import {
   activateBookAction,
+  createDailyGoalAction,
   createBookAction,
   finishBookAction,
   pauseBookAction,
   recordTodayAction,
+  updateDailyGoalAction,
   updateBookDetailsAction
 } from "./actions";
 import { UI_COPY } from "./ui-copy";
@@ -33,7 +38,10 @@ const errorMessages: Record<string, string> = {
   end_before_start: UI_COPY.errors.endBeforeStart,
   end_after_total: UI_COPY.errors.endAfterTotal,
   invalid_book: UI_COPY.errors.invalidBook,
-  book_finished: UI_COPY.errors.bookFinished
+  book_finished: UI_COPY.errors.bookFinished,
+  invalid_pages: UI_COPY.errors.invalidGoalPages,
+  invalid_date: UI_COPY.errors.invalidGoalDate,
+  invalid_goal: UI_COPY.errors.invalidGoal
 };
 
 const messageText: Record<string, string> = {
@@ -42,7 +50,8 @@ const messageText: Record<string, string> = {
   book_updated: UI_COPY.messages.bookUpdated,
   book_paused: UI_COPY.messages.bookPaused,
   book_activated: UI_COPY.messages.bookActivated,
-  book_finished: UI_COPY.messages.bookFinished
+  book_finished: UI_COPY.messages.bookFinished,
+  goal_saved: UI_COPY.messages.goalSaved
 };
 
 export default async function Home({
@@ -54,13 +63,21 @@ export default async function Home({
   const data = createSupabaseDataAccess();
   const today = getTodayIsoDate();
   const historyRange = getHistoryRange(today, 14);
-  const [settings, activeBook, todayEntry, allEntries, books] = await Promise.all([
-    data.settings.getSettings(),
+  const [dailyGoals, currentGoal, activeBook, rawTodayEntry, rawEntries, books] = await Promise.all([
+    data.goals.getDailyGoals(),
+    data.goals.getCurrentDailyGoal(today),
     data.books.getActiveBook(),
     data.entries.getEntryByDate(today),
     data.entries.listEntries(),
     data.books.listBooks()
   ]);
+  const allEntries = resolveDailyGoalsForEntries({
+    entries: rawEntries,
+    goals: dailyGoals
+  });
+  const todayEntry = rawTodayEntry
+    ? resolveDailyGoalsForEntries({ entries: [rawTodayEntry], goals: dailyGoals })[0]
+    : null;
   const recentEntries = allEntries.filter(
     (entry) => entry.date >= historyRange.from && entry.date <= historyRange.to
   );
@@ -68,19 +85,19 @@ export default async function Home({
     entries: recentEntries,
     anchorDate: today,
     dayCount: 14,
-    dailyGoalPages: settings.dailyGoalPages
+    dailyGoalPages: currentGoal.pagesPerDay
   });
   const metrics = calculateReadingMetrics({
     entries: allEntries,
     books,
     anchorDate: today,
-    dailyGoalPages: settings.dailyGoalPages
+    dailyGoalPages: currentGoal.pagesPerDay
   });
   const badges = buildComputedBadges({
     entries: allEntries,
     books,
     anchorDate: today,
-    dailyGoalPages: settings.dailyGoalPages
+    dailyGoalPages: currentGoal.pagesPerDay
   });
   const error = firstValue(params.error);
   const message = firstValue(params.message);
@@ -102,7 +119,7 @@ export default async function Home({
           </Link>
         </div>
         <div className="goal-token">
-          <span>{settings.dailyGoalPages}</span>
+          <span>{currentGoal.pagesPerDay}</span>
           <small>{UI_COPY.hero.goalLabel}</small>
         </div>
         <div className="quest-path" aria-label={UI_COPY.hero.pathLabel}>
@@ -117,7 +134,7 @@ export default async function Home({
 
       {activeBook ? (
         <TodayPanel
-          dailyGoalPages={settings.dailyGoalPages}
+          dailyGoalPages={currentGoal.pagesPerDay}
           todayEntry={todayEntry}
           activeBook={activeBook}
         />
@@ -132,9 +149,93 @@ export default async function Home({
         today={today}
         todayEntry={todayEntry}
       />
+      <DailyGoalPanel
+        currentGoal={currentGoal}
+        goals={dailyGoals}
+        today={today}
+      />
       <ProgressPanel metrics={metrics} badges={badges} />
       <HistoryPanel days={historyDays} />
     </main>
+  );
+}
+
+function DailyGoalPanel({
+  currentGoal,
+  goals,
+  today
+}: {
+  currentGoal: DailyGoal;
+  goals: DailyGoal[];
+  today: string;
+}) {
+  const sortedGoals = sortDailyGoalsDescending(goals);
+
+  return (
+    <section className="daily-goal-panel">
+      <div className="daily-goal-heading">
+        <div>
+          <p className="eyebrow">{UI_COPY.dailyGoal.eyebrow}</p>
+          <h2>{UI_COPY.dailyGoal.heading}</h2>
+        </div>
+        <p className="muted">{UI_COPY.dailyGoal.copy}</p>
+      </div>
+
+      <div className="daily-goal-grid">
+        <article className="current-goal-card">
+          <span>{UI_COPY.dailyGoal.currentHeading}</span>
+          <strong>{UI_COPY.dailyGoal.pagesValue(currentGoal.pagesPerDay)}</strong>
+          <p>{UI_COPY.dailyGoal.effectiveFromValue(currentGoal.effectiveFrom)}</p>
+        </article>
+
+        <form action={createDailyGoalAction} className="goal-form">
+          <h3>{UI_COPY.dailyGoal.changeHeading}</h3>
+          <label>
+            {UI_COPY.dailyGoal.pagesLabel}
+            <input name="pagesPerDay" type="number" min={1} defaultValue={currentGoal.pagesPerDay} required />
+          </label>
+          <label>
+            {UI_COPY.dailyGoal.effectiveFromLabel}
+            <input name="effectiveFrom" type="date" defaultValue={today} required />
+          </label>
+          <label>
+            {UI_COPY.dailyGoal.noteLabel}
+            <textarea name="note" rows={2} placeholder={UI_COPY.dailyGoal.notePlaceholder} />
+          </label>
+          <button type="submit">{UI_COPY.dailyGoal.saveButton}</button>
+        </form>
+      </div>
+
+      <details className="goal-history" open>
+        <summary>{UI_COPY.dailyGoal.historyHeading}</summary>
+        {sortedGoals.length > 0 ? (
+          <div className="goal-history-list">
+            {sortedGoals.map((goal) => (
+              <form action={updateDailyGoalAction} className="goal-history-row" key={goal.id}>
+                <input name="goalId" type="hidden" value={goal.id} />
+                <label>
+                  {UI_COPY.dailyGoal.pagesLabel}
+                  <input name="pagesPerDay" type="number" min={1} defaultValue={goal.pagesPerDay} required />
+                </label>
+                <label>
+                  {UI_COPY.dailyGoal.effectiveFromLabel}
+                  <input name="effectiveFrom" type="date" defaultValue={goal.effectiveFrom} required />
+                </label>
+                <label>
+                  {UI_COPY.dailyGoal.noteLabel}
+                  <input name="note" defaultValue={goal.note ?? ""} placeholder={UI_COPY.dailyGoal.notePlaceholder} />
+                </label>
+                <button type="submit" className="secondary-button">
+                  {UI_COPY.dailyGoal.saveButton}
+                </button>
+              </form>
+            ))}
+          </div>
+        ) : (
+          <p className="shelf-empty">{UI_COPY.dailyGoal.emptyHistory}</p>
+        )}
+      </details>
+    </section>
   );
 }
 

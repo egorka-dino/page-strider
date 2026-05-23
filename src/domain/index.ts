@@ -1,5 +1,6 @@
 export * from "./constants";
 export * from "./book-management";
+export * from "./daily-goals";
 export * from "./reading-calculations";
 export * from "./reading-history";
 export * from "./reading-progress";

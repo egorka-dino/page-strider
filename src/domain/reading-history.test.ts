@@ -96,4 +96,36 @@ describe("reading history", () => {
 
     expect(day.level).toBe("partial");
   });
+
+  it("uses historical daily goals for days without relying on the current goal", () => {
+    expect(
+      buildReadingHistoryDays({
+        entries: [
+          {
+            ...entries[0],
+            date: "2026-07-10",
+            pagesRead: 21,
+            dailyGoalPages: 22
+          },
+          {
+            ...entries[1],
+            date: "2026-06-20",
+            pagesRead: 18,
+            dailyGoalPages: 17
+          }
+        ],
+        anchorDate: "2026-07-10",
+        dayCount: 22,
+        dailyGoalPages: 22
+      })
+        .filter((day) => day.entry)
+        .map((day) => ({
+          date: day.date,
+          level: day.level
+        }))
+    ).toEqual([
+      { date: "2026-07-10", level: "partial" },
+      { date: "2026-06-20", level: "goal" }
+    ]);
+  });
 });

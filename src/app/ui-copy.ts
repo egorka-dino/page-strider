@@ -7,7 +7,7 @@ export const UI_COPY = {
     logoLabel: "Знак PageStrider",
     title: "PageStrider",
     copy: "Каждый день открывает новый отрезок маршрута: прочитайте страницы, сохраните шаг и двигайтесь к финишу книги.",
-    goalLabel: "цель квеста",
+    goalLabel: "Цель на день",
     pathLabel: "Маршрут чтения",
     pathSteps: ["Старт", "Шаг", "Награда"],
     reportLink: "Отчет для учителя"
@@ -18,7 +18,8 @@ export const UI_COPY = {
     bookUpdated: "Детали книги обновлены.",
     bookPaused: "Книга ждет на паузе. Можно выбрать следующий маршрут.",
     bookActivated: "Книга снова активна. Маршрут продолжен!",
-    bookFinished: "Книжный маршрут завершен!"
+    bookFinished: "Книжный маршрут завершен!",
+    goalSaved: "Цель на день сохранена. Новые шаги будут считаться по датам."
   },
   errors: {
     bookDetailsRequired: "Добавьте название и автора, чтобы открыть книжный квест.",
@@ -28,7 +29,10 @@ export const UI_COPY = {
     endBeforeStart: "Финиш шага должен быть после последней уже прочитанной страницы.",
     endAfterTotal: "Финиш шага не может быть дальше конца книги.",
     invalidBook: "Перед стартом нужны корректные данные книги.",
-    bookFinished: "Завершенную книгу нельзя снова сделать активной."
+    bookFinished: "Завершенную книгу нельзя снова сделать активной.",
+    invalidGoalPages: "Укажите целое число страниц больше нуля.",
+    invalidGoalDate: "Выберите корректную дату начала цели.",
+    invalidGoal: "Не удалось найти эту цель на день."
   },
   today: {
     activeBookEyebrow: "Текущий маршрут",
@@ -48,8 +52,24 @@ export const UI_COPY = {
     noteLabel: "Заметка к шагу",
     notePlaceholder: "Что было самым интересным?",
     formHint: (dailyGoalPages: number) =>
-      `Цель квеста: ${dailyGoalPages} стр. Если дошли дальше - маршрут получит мощный бонус.`,
+      `Цель на день: ${dailyGoalPages} стр. Если дошли дальше - маршрут получит мощный бонус.`,
     saveButton: "Засчитать шаг"
+  },
+  dailyGoal: {
+    eyebrow: "Настройка маршрута",
+    heading: "Цель на день",
+    copy: "Можно запланировать новую цель с нужной даты, а прошлые дни останутся посчитаны по своей цели.",
+    currentHeading: "Текущая цель",
+    changeHeading: "Изменить цель",
+    historyHeading: "История целей",
+    effectiveFromLabel: "Действует с",
+    pagesLabel: "Страниц в день",
+    noteLabel: "Комментарий",
+    notePlaceholder: "Например: новый этап маршрута",
+    saveButton: "Сохранить",
+    emptyHistory: "История целей пока пуста, используется цель на день 17 стр.",
+    pagesValue: (pages: number) => `${formatNumber(pages)} стр. в день`,
+    effectiveFromValue: (date: string) => `Действует с ${formatFullDate(date)}`
   },
   history: {
     eyebrow: "Лента маршрута",
@@ -92,7 +112,7 @@ export const UI_COPY = {
       readingDaysCount: "Дней с чтением",
       goalCompletedDaysCount: "Цель взята",
       averagePagesPerReadingDay: "Средний шаг",
-      averagePagesPerCalendarDay: "Темп календаря",
+      averagePagesPerCalendarDay: "Среднее за день",
       bestDayPages: "Лучший день",
       pagesReadThisWeek: "Страниц за неделю",
       readingDaysThisWeek: "Дней недели"
@@ -162,7 +182,8 @@ export const UI_COPY = {
     readerFallback: "Читатель",
     periodLabel: "Период",
     periodValue: (from: string, to: string) => `${formatFullDate(from)} - ${formatFullDate(to)}`,
-    dailyGoalLabel: "Цель дня",
+    dailyGoalLabel: "Цель на день",
+    historicalGoalValue: "учитывается по датам",
     summaryLabel: "Итоги периода",
     summary: {
       totalPagesRead: "Всего страниц",
@@ -181,6 +202,7 @@ export const UI_COPY = {
       book: "Книга",
       pages: "Страницы",
       pagesRead: "Прочитано",
+      dailyGoal: "Цель на день",
       goalStatus: "Цель",
       note: "Заметка"
     },

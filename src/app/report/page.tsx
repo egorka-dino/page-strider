@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-import { buildTeacherReportSummary, type ReadingEntry } from "@/domain";
+import {
+  buildTeacherReportSummary,
+  resolveDailyGoalsForEntries,
+  type ReadingEntry
+} from "@/domain";
 import { createSupabaseDataAccess } from "@/data";
 
 import { UI_COPY } from "../ui-copy";
@@ -21,17 +25,23 @@ export default async function TeacherReportPage({
     to: firstValue(params.to),
     today
   });
-  const [settings, reader, entries] = await Promise.all([
-    data.settings.getSettings(),
+  const [currentGoal, goals, reader, rawEntries] = await Promise.all([
+    data.goals.getCurrentDailyGoal(today),
+    data.goals.getDailyGoals(),
     data.reader.getReader(),
     data.entries.listEntries(range)
   ]);
-  const sortedEntries = sortEntriesAscending(entries);
+  const sortedEntries = sortEntriesAscending(
+    resolveDailyGoalsForEntries({
+      entries: rawEntries,
+      goals
+    })
+  );
   const summary = buildTeacherReportSummary({
     entries: sortedEntries,
     from: range.from,
     to: range.to,
-    dailyGoalPages: settings.dailyGoalPages
+    dailyGoalPages: currentGoal.pagesPerDay
   });
 
   return (
@@ -78,7 +88,7 @@ export default async function TeacherReportPage({
             </div>
             <div>
               <dt>{UI_COPY.report.dailyGoalLabel}</dt>
-              <dd>{UI_COPY.report.pagesValue(settings.dailyGoalPages)}</dd>
+              <dd>{UI_COPY.report.historicalGoalValue}</dd>
             </div>
           </dl>
         </header>
@@ -130,6 +140,7 @@ export default async function TeacherReportPage({
                   <th>{UI_COPY.report.table.book}</th>
                   <th>{UI_COPY.report.table.pages}</th>
                   <th>{UI_COPY.report.table.pagesRead}</th>
+                  <th>{UI_COPY.report.table.dailyGoal}</th>
                   <th>{UI_COPY.report.table.goalStatus}</th>
                   <th>{UI_COPY.report.table.note}</th>
                 </tr>
@@ -143,6 +154,7 @@ export default async function TeacherReportPage({
                     <td>{entry.bookTitle}</td>
                     <td>{UI_COPY.report.pageRange(entry.startPage, entry.endPage)}</td>
                     <td>{UI_COPY.report.pagesValue(entry.pagesRead)}</td>
+                    <td>{UI_COPY.report.pagesValue(entry.dailyGoalPages)}</td>
                     <td>{formatGoalStatus(entry)}</td>
                     <td>{entry.note || UI_COPY.report.emptyNote}</td>
                   </tr>

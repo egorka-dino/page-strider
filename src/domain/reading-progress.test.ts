@@ -68,6 +68,25 @@ describe("reading progress", () => {
     });
   });
 
+  it("keeps streaks across a daily goal change when each day meets its historical goal", () => {
+    const changedGoalEntries = [
+      entry("2026-06-30", 17, 17),
+      entry("2026-07-01", 22, 22),
+      entry("2026-07-02", 23, 22)
+    ];
+
+    expect(
+      calculateStreaks({
+        entries: changedGoalEntries,
+        dailyGoalPages: 22,
+        anchorDate: "2026-07-02"
+      })
+    ).toEqual({
+      currentStreakDays: 3,
+      bestStreakDays: 3
+    });
+  });
+
   it("computes earned badges from reading progress and book state", () => {
     const badges = buildComputedBadges({
       entries,
@@ -92,7 +111,11 @@ describe("reading progress", () => {
   });
 });
 
-function entry(date: string, pagesRead: number): ReadingEntry {
+function entry(
+  date: string,
+  pagesRead: number,
+  dailyGoalPages = 17
+): ReadingEntry {
   return {
     id: `entry-${date}`,
     date,
@@ -101,7 +124,7 @@ function entry(date: string, pagesRead: number): ReadingEntry {
     startPage: 1,
     endPage: pagesRead,
     pagesRead,
-    dailyGoalPages: 17
+    dailyGoalPages
   };
 }
 

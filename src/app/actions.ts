@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import {
   createActiveBookDraft,
   finishBook,
+  normalizeDailyGoalInput,
   pauseBook,
   prepareBookActivation,
   prepareTodayReadingEntry
@@ -140,15 +141,15 @@ export async function finishBookAction(formData: FormData): Promise<void> {
 export async function recordTodayAction(formData: FormData): Promise<void> {
   const data = createSupabaseDataAccess();
   const today = getTodayIsoDate();
-  const [activeBook, settings, existingEntry] = await Promise.all([
+  const [activeBook, dailyGoal, existingEntry] = await Promise.all([
     data.books.getActiveBook(),
-    data.settings.getSettings(),
+    data.goals.getCurrentDailyGoal(today),
     data.entries.getEntryByDate(today)
   ]);
 
   const result = prepareTodayReadingEntry({
     activeBook,
-    settings,
+    settings: { dailyGoalPages: dailyGoal.pagesPerDay },
     today,
     finishedPage: getNumber(formData, "finishedPage"),
     note: getString(formData, "note"),
@@ -164,6 +165,58 @@ export async function recordTodayAction(formData: FormData): Promise<void> {
 
   revalidatePath("/");
   redirect("/?message=entry_saved");
+}
+
+export async function createDailyGoalAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const result = normalizeDailyGoalInput({
+    pagesPerDay: getNumber(formData, "pagesPerDay"),
+    effectiveFrom: getString(formData, "effectiveFrom"),
+    note: getString(formData, "note")
+  });
+
+  if (!result.ok) {
+    redirectWithError(result.error);
+  }
+
+  const goal = await data.goals.createDailyGoal(result.value);
+
+  if (goal.effectiveFrom <= getTodayIsoDate()) {
+    await data.settings.updateSettings({ dailyGoalPages: goal.pagesPerDay });
+  }
+
+  revalidatePath("/");
+  revalidatePath("/report");
+  redirect("/?message=goal_saved");
+}
+
+export async function updateDailyGoalAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const goalId = getString(formData, "goalId");
+  const result = normalizeDailyGoalInput({
+    pagesPerDay: getNumber(formData, "pagesPerDay"),
+    effectiveFrom: getString(formData, "effectiveFrom"),
+    note: getString(formData, "note")
+  });
+
+  if (!goalId) {
+    redirectWithError("invalid_goal");
+  }
+
+  if (!result.ok) {
+    redirectWithError(result.error);
+  }
+
+  const goal = await data.goals.updateDailyGoal(goalId, result.value);
+
+  if (goal.effectiveFrom <= getTodayIsoDate()) {
+    const currentGoal = await data.goals.getCurrentDailyGoal(getTodayIsoDate());
+    await data.settings.updateSettings({ dailyGoalPages: currentGoal.pagesPerDay });
+  }
+
+  revalidatePath("/");
+  revalidatePath("/report");
+  redirect("/?message=goal_saved");
 }
 
 function getString(formData: FormData, key: string): string {

@@ -50,6 +50,21 @@ export interface Settings {
   dailyGoalPages: number;
 }
 
+export interface DailyGoal {
+  id: string;
+  pagesPerDay: number;
+  effectiveFrom: string;
+  note: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DailyGoalInput {
+  pagesPerDay: number;
+  effectiveFrom: string;
+  note?: string;
+}
+
 export interface BookPageState {
   startPage: number;
   currentPage: number;

@@ -49,6 +49,22 @@ describe("teacher report", () => {
       bestDayPages: 0
     });
   });
+
+  it("summarizes completion against each entry's historical daily goal", () => {
+    const entries: ReadingEntry[] = [
+      entry("2026-06-20", 18, 17),
+      entry("2026-07-10", 21, 22)
+    ];
+
+    expect(
+      buildTeacherReportSummary({
+        entries,
+        from: "2026-06-20",
+        to: "2026-07-10",
+        dailyGoalPages: 22
+      }).goalCompletedDaysCount
+    ).toBe(1);
+  });
 });
 
 function entry(date: string, pagesRead: number, dailyGoalPages: number): ReadingEntry {

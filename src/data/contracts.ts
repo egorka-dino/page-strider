@@ -1,4 +1,11 @@
-import type { Book, ReadingEntry, ReaderProfile, Settings } from "@/domain";
+import type {
+  Book,
+  DailyGoal,
+  DailyGoalInput,
+  ReadingEntry,
+  ReaderProfile,
+  Settings
+} from "@/domain";
 
 export interface SettingsRepository {
   getSettings(): Promise<Settings>;
@@ -25,11 +32,20 @@ export interface ReadingEntryRepository {
   upsertEntry(entry: Omit<ReadingEntry, "id">): Promise<ReadingEntry>;
 }
 
+export interface DailyGoalRepository {
+  getDailyGoals(): Promise<DailyGoal[]>;
+  getCurrentDailyGoal(date?: string): Promise<DailyGoal>;
+  getDailyGoalForDate(date: string): Promise<DailyGoal>;
+  createDailyGoal(input: DailyGoalInput): Promise<DailyGoal>;
+  updateDailyGoal(id: string, input: DailyGoalInput): Promise<DailyGoal>;
+}
+
 export interface PageStriderDataAccess {
   settings: SettingsRepository;
   reader: ReaderRepository;
   books: BookRepository;
   entries: ReadingEntryRepository;
+  goals: DailyGoalRepository;
 }
 
 export interface DateRange {

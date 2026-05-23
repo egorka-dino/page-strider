@@ -1,9 +1,20 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-import type { Book, BookStatus, ReadingEntry, ReaderProfile, Settings } from "@/domain";
+import {
+  DEFAULT_DAILY_GOAL,
+  getDailyGoalForDate,
+  type Book,
+  type BookStatus,
+  type DailyGoal,
+  type DailyGoalInput,
+  type ReadingEntry,
+  type ReaderProfile,
+  type Settings
+} from "@/domain";
 import type {
   BookRepository,
   DateRange,
+  DailyGoalRepository,
   PageStriderDataAccess,
   ReaderRepository,
   ReadingEntryRepository,
@@ -19,7 +30,8 @@ export function createSupabaseDataAccess(): PageStriderDataAccess {
     settings: new SupabaseSettingsRepository(supabase),
     reader: new SupabaseReaderRepository(supabase),
     books: new SupabaseBookRepository(supabase),
-    entries: new SupabaseReadingEntryRepository(supabase)
+    entries: new SupabaseReadingEntryRepository(supabase),
+    goals: new SupabaseDailyGoalRepository(supabase)
   };
 }
 
@@ -282,6 +294,75 @@ class SupabaseReadingEntryRepository implements ReadingEntryRepository {
   }
 }
 
+class SupabaseDailyGoalRepository implements DailyGoalRepository {
+  constructor(private readonly supabase: SupabaseDatabase) {}
+
+  async getDailyGoals(): Promise<DailyGoal[]> {
+    const { data, error } = await this.supabase
+      .from("daily_goals")
+      .select("*")
+      .order("effective_from", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return data.map(mapDailyGoal);
+  }
+
+  async getCurrentDailyGoal(date = getTodayIsoDate()): Promise<DailyGoal> {
+    return this.getDailyGoalForDate(date);
+  }
+
+  async getDailyGoalForDate(date: string): Promise<DailyGoal> {
+    const goals = await this.getDailyGoals();
+
+    return getDailyGoalForDate(goals, date);
+  }
+
+  async createDailyGoal(input: DailyGoalInput): Promise<DailyGoal> {
+    const { data, error } = await this.supabase
+      .from("daily_goals")
+      .upsert(
+        {
+          pages_per_day: input.pagesPerDay,
+          effective_from: input.effectiveFrom,
+          note: input.note ?? null,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: "effective_from" }
+      )
+      .select("*")
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapDailyGoal(data);
+  }
+
+  async updateDailyGoal(id: string, input: DailyGoalInput): Promise<DailyGoal> {
+    const { data, error } = await this.supabase
+      .from("daily_goals")
+      .update({
+        pages_per_day: input.pagesPerDay,
+        effective_from: input.effectiveFrom,
+        note: input.note ?? null,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", id)
+      .select("*")
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapDailyGoal(data);
+  }
+}
+
 function mapBook(row: Record<string, unknown>): Book {
   return {
     id: String(row.id),
@@ -323,4 +404,38 @@ function mapReadingEntry(row: Record<string, unknown>): ReadingEntry {
     dailyGoalPages: Number(row.daily_goal_pages),
     ...note
   };
+}
+
+function mapDailyGoal(row: Record<string, unknown>): DailyGoal {
+  if (!row.id) {
+    return DEFAULT_DAILY_GOAL;
+  }
+
+  return {
+    id: String(row.id),
+    pagesPerDay: Number(row.pages_per_day),
+    effectiveFrom: String(row.effective_from),
+    note: row.note ? String(row.note) : null,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
+  };
+}
+
+function getTodayIsoDate(): string {
+  const timeZone = process.env.PAGESTRIDER_TIME_ZONE ?? "Europe/Minsk";
+  const parts = new Intl.DateTimeFormat("en", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  if (!year || !month || !day) {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  return `${year}-${month}-${day}`;
 }

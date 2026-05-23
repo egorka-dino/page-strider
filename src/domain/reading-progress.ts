@@ -106,7 +106,7 @@ export function buildComputedBadges(input: ProgressInput): Badge[] {
     {
       key: "goal_keeper",
       label: "Хранитель цели",
-      description: "Цель дня взята хотя бы один раз.",
+      description: "Цель на день взята хотя бы один раз.",
       earnedDate:
         entries.find((entry) => entry.pagesRead >= goalForEntry(entry, normalizedGoal))
           ?.date ?? null
