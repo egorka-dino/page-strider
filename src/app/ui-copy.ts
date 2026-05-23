@@ -4,6 +4,7 @@ export const UI_COPY = {
   },
   hero: {
     eyebrow: "Книжный квест дня",
+    logoLabel: "Знак PageStrider",
     title: "PageStrider",
     copy: "Каждый день открывает новый отрезок маршрута: прочитайте страницы, сохраните шаг и двигайтесь к финишу книги.",
     goalLabel: "цель квеста",

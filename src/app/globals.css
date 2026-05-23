@@ -140,6 +140,19 @@ label {
   line-height: 0.95;
 }
 
+.hero-brand {
+  align-items: center;
+  display: flex;
+  gap: 0.9rem;
+}
+
+.page-strider-logo {
+  color: var(--ps-accent);
+  filter: drop-shadow(0 0.45rem 0.8rem color-mix(in srgb, var(--ps-ink) 14%, transparent));
+  flex: 0 0 clamp(4rem, 11vw, 6.25rem);
+  width: clamp(4rem, 11vw, 6.25rem);
+}
+
 .hero-copy,
 .muted,
 .form-hint {
@@ -932,6 +945,12 @@ label {
 
   .hero-panel {
     display: grid;
+  }
+
+  .hero-brand {
+    align-items: start;
+    flex-direction: column;
+    gap: 0.65rem;
   }
 
   .goal-token {

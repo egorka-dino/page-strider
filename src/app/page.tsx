@@ -90,7 +90,10 @@ export default async function Home({
       <section className="hero-panel">
         <div>
           <p className="eyebrow">{UI_COPY.hero.eyebrow}</p>
-          <h1>{UI_COPY.hero.title}</h1>
+          <div className="hero-brand">
+            <PageStriderLogo label={UI_COPY.hero.logoLabel} />
+            <h1>{UI_COPY.hero.title}</h1>
+          </div>
           <p className="hero-copy">
             {UI_COPY.hero.copy}
           </p>
@@ -132,6 +135,41 @@ export default async function Home({
       <ProgressPanel metrics={metrics} badges={badges} />
       <HistoryPanel days={historyDays} />
     </main>
+  );
+}
+
+function PageStriderLogo({ label }: { label: string }) {
+  return (
+    <svg className="page-strider-logo" viewBox="0 0 150 150" role="img" aria-label={label}>
+      <path
+        d="M43 18h47l27 27v86H43z"
+        fill="#fff4d7"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="7"
+      />
+      <path
+        d="M90 20v27h27"
+        fill="#d9eadb"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="7"
+      />
+      <path
+        d="M75 55l8 17 18 2-13 13 3 18-16-9-16 9 3-18-13-13 18-2z"
+        fill="var(--ps-spark)"
+        stroke="var(--ps-ink)"
+        strokeLinejoin="round"
+        strokeWidth="4"
+      />
+      <path
+        d="M57 115h36"
+        fill="none"
+        stroke="var(--ps-sky)"
+        strokeLinecap="round"
+        strokeWidth="7"
+      />
+    </svg>
   );
 }
 

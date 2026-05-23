@@ -5,6 +5,7 @@ import { UI_COPY } from "./ui-copy";
 describe("UI copy", () => {
   it("uses Russian copy for the visible PageStrider interface", () => {
     expect(UI_COPY.hero.eyebrow).toBe("Книжный квест дня");
+    expect(UI_COPY.hero.logoLabel).toBe("Знак PageStrider");
     expect(UI_COPY.bookSetup.heading).toBe("Открыть новый книжный маршрут");
     expect(UI_COPY.books.pausedHeading).toBe("На паузе");
     expect(UI_COPY.today.finishedPageLabel).toBe("До какой страницы дошли?");
