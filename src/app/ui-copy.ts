@@ -67,6 +67,37 @@ export const UI_COPY = {
     emptyDayDetail: "В этот день маршрут отдыхал. Следующая отметка может стать новой главой.",
     noteLabel: "Заметка"
   },
+  progress: {
+    eyebrow: "Сила маршрута",
+    heading: "Ритм чтения",
+    copy: "Здесь видно, как растет путь: серии дней, страницы недели и новые награды.",
+    streakHeading: "Огонек серии",
+    currentStreak: "Текущая серия",
+    bestStreak: "Лучшая серия",
+    streakUnit: (days: number) => `${days} дн.`,
+    streakEncouragement:
+      "Даже если маршрут сделал паузу, следующий шаг снова зажигает серию.",
+    metricsHeading: "Следы на карте",
+    metrics: {
+      totalPagesRead: "Всего страниц",
+      booksFinished: "Книг завершено",
+      readingDaysCount: "Дней с чтением",
+      goalCompletedDaysCount: "Цель взята",
+      averagePagesPerReadingDay: "Средний шаг",
+      averagePagesPerCalendarDay: "Темп календаря",
+      bestDayPages: "Лучший день",
+      pagesReadThisWeek: "Страниц за неделю",
+      readingDaysThisWeek: "Дней недели"
+    },
+    metricPages: (pages: number) => `${formatNumber(pages)} стр.`,
+    metricDays: (days: number) => `${formatNumber(days)} дн.`,
+    metricBooks: (books: number) => `${formatNumber(books)} шт.`,
+    noAverage: "пока рано",
+    badgesHeading: "Награды маршрута",
+    earnedBadge: "получено",
+    lockedBadge: "еще в пути",
+    emptyBadges: "Первые награды появятся после сохраненных читательских квестов."
+  },
   bookSetup: {
     eyebrow: "Старт маршрута",
     heading: "Выберите книгу для первого квеста",
@@ -79,3 +110,9 @@ export const UI_COPY = {
     submitButton: "Открыть квест"
   }
 } as const;
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat("ru-RU", {
+    maximumFractionDigits: 1
+  }).format(value);
+}

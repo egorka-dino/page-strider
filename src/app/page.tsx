@@ -1,8 +1,12 @@
 import {
   buildReadingHistoryDays,
+  buildComputedBadges,
   calculateBookProgress,
   calculatePagesLeft,
+  calculateReadingMetrics,
+  type Badge,
   type Book,
+  type ReadingMetrics,
   type ReadingHistoryDay,
   type ReadingEntry
 } from "@/domain";
@@ -37,16 +41,32 @@ export default async function Home({
   const data = createSupabaseDataAccess();
   const today = getTodayIsoDate();
   const historyRange = getHistoryRange(today, 14);
-  const [settings, activeBook, todayEntry, recentEntries] = await Promise.all([
+  const [settings, activeBook, todayEntry, allEntries, books] = await Promise.all([
     data.settings.getSettings(),
     data.books.getActiveBook(),
     data.entries.getEntryByDate(today),
-    data.entries.listEntries(historyRange)
+    data.entries.listEntries(),
+    data.books.listBooks()
   ]);
+  const recentEntries = allEntries.filter(
+    (entry) => entry.date >= historyRange.from && entry.date <= historyRange.to
+  );
   const historyDays = buildReadingHistoryDays({
     entries: recentEntries,
     anchorDate: today,
     dayCount: 14,
+    dailyGoalPages: settings.dailyGoalPages
+  });
+  const metrics = calculateReadingMetrics({
+    entries: allEntries,
+    books,
+    anchorDate: today,
+    dailyGoalPages: settings.dailyGoalPages
+  });
+  const badges = buildComputedBadges({
+    entries: allEntries,
+    books,
+    anchorDate: today,
     dailyGoalPages: settings.dailyGoalPages
   });
   const error = firstValue(params.error);
@@ -86,6 +106,7 @@ export default async function Home({
         <BookSetupPanel today={today} />
       )}
 
+      <ProgressPanel metrics={metrics} badges={badges} />
       <HistoryPanel days={historyDays} />
     </main>
   );
@@ -217,6 +238,127 @@ function HistoryPanel({ days }: { days: ReadingHistoryDay[] }) {
           <h3>{UI_COPY.history.emptyHeading}</h3>
           <p>{UI_COPY.history.emptyCopy}</p>
         </div>
+      )}
+    </section>
+  );
+}
+
+function ProgressPanel({
+  badges,
+  metrics
+}: {
+  badges: Badge[];
+  metrics: ReadingMetrics;
+}) {
+  const metricItems = [
+    {
+      label: UI_COPY.progress.metrics.totalPagesRead,
+      value: UI_COPY.progress.metricPages(metrics.totalPagesRead)
+    },
+    {
+      label: UI_COPY.progress.metrics.booksFinished,
+      value: UI_COPY.progress.metricBooks(metrics.booksFinished)
+    },
+    {
+      label: UI_COPY.progress.metrics.readingDaysCount,
+      value: UI_COPY.progress.metricDays(metrics.readingDaysCount)
+    },
+    {
+      label: UI_COPY.progress.metrics.goalCompletedDaysCount,
+      value: UI_COPY.progress.metricDays(metrics.goalCompletedDaysCount)
+    },
+    {
+      label: UI_COPY.progress.metrics.averagePagesPerReadingDay,
+      value:
+        metrics.averagePagesPerReadingDay === null
+          ? UI_COPY.progress.noAverage
+          : UI_COPY.progress.metricPages(metrics.averagePagesPerReadingDay)
+    },
+    {
+      label: UI_COPY.progress.metrics.averagePagesPerCalendarDay,
+      value:
+        metrics.averagePagesPerCalendarDay === null
+          ? UI_COPY.progress.noAverage
+          : UI_COPY.progress.metricPages(metrics.averagePagesPerCalendarDay)
+    },
+    {
+      label: UI_COPY.progress.metrics.bestDayPages,
+      value: UI_COPY.progress.metricPages(metrics.bestDayPages)
+    },
+    {
+      label: UI_COPY.progress.metrics.pagesReadThisWeek,
+      value: UI_COPY.progress.metricPages(metrics.pagesReadThisWeek)
+    },
+    {
+      label: UI_COPY.progress.metrics.readingDaysThisWeek,
+      value: UI_COPY.progress.metricDays(metrics.readingDaysThisWeek)
+    }
+  ];
+  const earnedCount = badges.filter((badge) => badge.earned).length;
+
+  return (
+    <section className="progress-panel">
+      <div className="progress-heading">
+        <div>
+          <p className="eyebrow">{UI_COPY.progress.eyebrow}</p>
+          <h2>{UI_COPY.progress.heading}</h2>
+        </div>
+        <p className="muted">{UI_COPY.progress.copy}</p>
+      </div>
+
+      <div className="streak-band">
+        <div>
+          <p className="eyebrow">{UI_COPY.progress.streakHeading}</p>
+          <dl>
+            <div>
+              <dt>{UI_COPY.progress.currentStreak}</dt>
+              <dd>{UI_COPY.progress.streakUnit(metrics.currentStreakDays)}</dd>
+            </div>
+            <div>
+              <dt>{UI_COPY.progress.bestStreak}</dt>
+              <dd>{UI_COPY.progress.streakUnit(metrics.bestStreakDays)}</dd>
+            </div>
+          </dl>
+        </div>
+        <p>{UI_COPY.progress.streakEncouragement}</p>
+      </div>
+
+      <div className="metric-shelf" aria-label={UI_COPY.progress.metricsHeading}>
+        {metricItems.map((item) => (
+          <article className="metric-leaf" key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+          </article>
+        ))}
+      </div>
+
+      <div className="badge-heading">
+        <h3>{UI_COPY.progress.badgesHeading}</h3>
+        <span>
+          {earnedCount}/{badges.length}
+        </span>
+      </div>
+
+      {badges.length > 0 ? (
+        <div className="badge-trail">
+          {badges.map((badge) => (
+            <article
+              className={`badge-token ${badge.earned ? "badge-earned" : "badge-locked"}`}
+              key={badge.key}
+            >
+              <div aria-hidden="true">{badge.earned ? "★" : "☆"}</div>
+              <div>
+                <h4>{badge.label}</h4>
+                <p>{badge.description}</p>
+                <span>
+                  {badge.earned ? UI_COPY.progress.earnedBadge : UI_COPY.progress.lockedBadge}
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="badge-empty">{UI_COPY.progress.emptyBadges}</p>
       )}
     </section>
   );

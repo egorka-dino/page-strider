@@ -9,12 +9,14 @@ export type DayLevel =
   | "legendary";
 
 export type BadgeKey =
-  | "first_entry"
-  | "goal_day"
-  | "three_day_streak"
-  | "seven_day_streak"
-  | "book_finished"
-  | "legendary_day";
+  | "first_stride"
+  | "goal_keeper"
+  | "page_sprinter"
+  | "long_strider"
+  | "century_strider"
+  | "book_finisher"
+  | "steady_week"
+  | "comeback";
 
 export interface ReaderProfile {
   name: string;
@@ -62,16 +64,22 @@ export interface BookProgress {
 
 export interface ReadingMetrics {
   totalPagesRead: number;
-  totalReadingDays: number;
-  goalDays: number;
+  booksFinished: number;
   currentStreakDays: number;
-  longestStreakDays: number;
+  bestStreakDays: number;
+  readingDaysCount: number;
+  goalCompletedDaysCount: number;
   averagePagesPerReadingDay: number | null;
+  averagePagesPerCalendarDay: number | null;
+  bestDayPages: number;
+  pagesReadThisWeek: number;
+  readingDaysThisWeek: number;
 }
 
 export interface Badge {
   key: BadgeKey;
   label: string;
+  description: string;
   earned: boolean;
   earnedDate: string | null;
 }

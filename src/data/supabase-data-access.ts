@@ -134,6 +134,19 @@ class SupabaseBookRepository implements BookRepository {
     return data ? mapBook(data) : null;
   }
 
+  async listBooks(): Promise<Book[]> {
+    const { data, error } = await this.supabase
+      .from("books")
+      .select("*")
+      .order("started_date", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return data.map(mapBook);
+  }
+
   async createBook(book: Omit<Book, "id">): Promise<Book> {
     const { error: pauseError } = await this.supabase
       .from("books")
