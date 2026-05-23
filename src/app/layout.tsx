@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import { UI_COPY } from "./ui-copy";
 
 export const metadata: Metadata = {
   title: "PageStrider",
-  description: "A small reading journal for one reader."
+  description: UI_COPY.metadata.description
 };
 
 export default function RootLayout({
@@ -13,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body>{children}</body>
     </html>
   );

@@ -8,6 +8,10 @@ PageStrider is a small reading journal app for one child reader. It should help 
 
 Do not include personal names or family relationships in project documentation, code, seed data, comments, or UI copy. Use neutral terms such as `reader`, `user`, `adult user`, and `teacher`.
 
+The product interface must be Russian-language only. UI labels, buttons, messages, metadata descriptions, placeholders, and user-facing helper text should be written in Russian. Keep code, identifiers, comments, and technical documentation in English unless the user explicitly asks otherwise.
+
+The interface should motivate reading through a light game-like tone. Prefer inviting words around quests, routes, page streaks, progress, and rewards over dry form language. This should affect copy, empty states, buttons, and visual hierarchy, while keeping MVP scope intact and not implementing later-phase badge, metrics, or report features early.
+
 ## Read Before Work
 
 At the start of a new chat or phase, read these files:

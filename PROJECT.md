@@ -290,6 +290,8 @@ The report should look good on A4 paper.
 ## Engineering Principles
 
 - Code and comments must be in English.
+- User-facing interface copy must be Russian-language only, including labels, buttons, validation messages, placeholders, helper text, and metadata descriptions.
+- User-facing interface copy and visual hierarchy should feel motivating and lightly game-like. Prefer language around quests, reading routes, page streaks, progress, and rewards instead of dry form labels, while keeping later-phase badge, metrics, and report features out of the MVP until their phase.
 - Keep business logic in utility functions, not directly inside UI components.
 - Keep persistence behind a small data-access layer so the database provider can later be replaced.
 - Prefer TypeScript types for core entities and calculation inputs.
