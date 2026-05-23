@@ -8,7 +8,13 @@ export const pageStriderTheme = {
     accentInk: "var(--ps-accent-ink)",
     success: "var(--ps-success)",
     warning: "var(--ps-warning)",
-    badge: "var(--ps-badge)"
+    badge: "var(--ps-badge)",
+    dayNoReading: "var(--ps-day-no-reading)",
+    dayPartial: "var(--ps-day-partial)",
+    dayGoal: "var(--ps-day-goal)",
+    dayGood: "var(--ps-day-good)",
+    dayGreat: "var(--ps-day-great)",
+    dayLegendary: "var(--ps-day-legendary)"
   },
   radius: {
     panel: "0.5rem",

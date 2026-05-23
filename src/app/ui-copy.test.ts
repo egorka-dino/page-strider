@@ -21,6 +21,8 @@ describe("UI copy", () => {
       UI_COPY.hero.pathLabel,
       UI_COPY.today.nextStepEyebrow,
       UI_COPY.today.saveButton,
+      UI_COPY.history.heading,
+      UI_COPY.history.emptyHeading,
       UI_COPY.bookSetup.submitButton
     ].join(" ");
 

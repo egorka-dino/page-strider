@@ -11,12 +11,14 @@ This file tracks infrastructure setup for PageStrider.
 - GitHub repository: connected by Vercel CLI.
 - Supabase local config: initialized.
 - Supabase CLI: authenticated.
-- Supabase remote project: linked.
-- Supabase Phase 2 schema migration: applied.
-- Supabase project name: `Page Strider`.
-- Supabase project ref: `mszcmtqkfanijrypcwvd`.
+- Supabase remote projects: Production and Dev are separate.
+- Supabase Phase 2 schema migration: applied to Production and Dev.
+- Supabase Production project name: `Page Strider`.
+- Supabase Production project ref: `mszcmtqkfanijrypcwvd`.
+- Supabase Dev project name: `Page Strider Dev`.
+- Supabase Dev project ref: `uouwajdcdwgbitaivnfv`.
 - Supabase region: `eu-west-1`.
-- Vercel env vars: Supabase URL, anon key, and service role key added for Production, Preview, and Development.
+- Vercel env vars: Production points to the Production Supabase project; Preview and Development point to the Dev Supabase project.
 - Direct Postgres connection string: not needed for the current Supabase-first MVP setup.
 
 ## Vercel
@@ -31,6 +33,8 @@ npx vercel@latest project inspect page-strider --scope egorka-dinos-projects
 npx vercel@latest env ls
 npx vercel@latest env pull .env.local --yes
 ```
+
+By default, `vercel env pull .env.local --yes` pulls the Development environment. For PageStrider, that should point to the Dev Supabase project, not Production.
 
 ## Supabase
 
@@ -55,11 +59,13 @@ Supabase CLI authentication was completed with:
 npx supabase@latest login
 ```
 
-The local project was linked to the remote Supabase project:
+The local project is linked to the Dev Supabase project so local migration work targets the safer database by default:
 
 ```bash
-npx supabase@latest link --project-ref mszcmtqkfanijrypcwvd
+npx supabase@latest link --project-ref uouwajdcdwgbitaivnfv
 ```
+
+The Production Supabase project remains `mszcmtqkfanijrypcwvd`. Be explicit before running remote migration commands against Production.
 
 The linked project metadata lives under `supabase/.temp/`, which is ignored by `supabase/.gitignore`.
 
@@ -79,12 +85,19 @@ Optional later:
 
 Current Vercel status:
 
-- `NEXT_PUBLIC_SUPABASE_URL`: added to Production, Preview, and Development.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: added to Production, Preview, and Development.
-- `SUPABASE_SERVICE_ROLE_KEY`: added to Production, Preview, and Development.
+- `NEXT_PUBLIC_SUPABASE_URL`: Production uses `mszcmtqkfanijrypcwvd`; Preview and Development use `uouwajdcdwgbitaivnfv`.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Production uses the Production Supabase key; Preview and Development use the Dev Supabase key.
+- `SUPABASE_SERVICE_ROLE_KEY`: Production uses the Production Supabase key; Preview and Development use the Dev Supabase key.
 - `DATABASE_URL`: not added because the MVP can use Supabase client APIs without a direct Postgres connection string.
 
 Do not commit real secret values.
+
+## Environment Separation
+
+- Use Production for the real reading journal.
+- Use Preview and Development for testing against the Dev database.
+- Keep local `.env.local` pulled from Vercel Development unless intentionally testing Production.
+- When adding future migrations, apply and verify them on Dev first, then apply them to Production intentionally.
 
 ## Remaining Setup
 

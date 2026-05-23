@@ -43,6 +43,30 @@ export const UI_COPY = {
       `Цель квеста: ${dailyGoalPages} стр. Если дошли дальше - маршрут получит мощный бонус.`,
     saveButton: "Засчитать шаг"
   },
+  history: {
+    eyebrow: "Лента маршрута",
+    heading: "История чтения",
+    copy: "Последние дни показывают, где маршрут уже сияет, а где можно открыть новый шаг.",
+    emptyHeading: "Маршрут еще ждет первых отметок",
+    emptyCopy: "Когда появятся сохраненные квесты, здесь будет видно путь по дням.",
+    calendarLabel: "Календарь читательских дней",
+    noReading: "День без отметки",
+    detailsHeading: "Детали дней",
+    bookLabel: "Книга",
+    pagesLabel: "Страницы",
+    pagesRead: (pagesRead: number) => `${pagesRead} стр.`,
+    pageRange: (startPage: number, endPage: number) => `${startPage}-${endPage}`,
+    goalStatus: {
+      no_reading: "пока без чтения",
+      partial: "часть цели",
+      goal: "цель взята",
+      good: "сильный шаг",
+      great: "большой рывок",
+      legendary: "легендарный день"
+    },
+    emptyDayDetail: "В этот день маршрут отдыхал. Следующая отметка может стать новой главой.",
+    noteLabel: "Заметка"
+  },
   bookSetup: {
     eyebrow: "Старт маршрута",
     heading: "Выберите книгу для первого квеста",

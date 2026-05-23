@@ -1,7 +1,9 @@
 import {
+  buildReadingHistoryDays,
   calculateBookProgress,
   calculatePagesLeft,
   type Book,
+  type ReadingHistoryDay,
   type ReadingEntry
 } from "@/domain";
 import { createSupabaseDataAccess } from "@/data";
@@ -34,11 +36,19 @@ export default async function Home({
   const params = searchParams ? await searchParams : {};
   const data = createSupabaseDataAccess();
   const today = getTodayIsoDate();
-  const [settings, activeBook, todayEntry] = await Promise.all([
+  const historyRange = getHistoryRange(today, 14);
+  const [settings, activeBook, todayEntry, recentEntries] = await Promise.all([
     data.settings.getSettings(),
     data.books.getActiveBook(),
-    data.entries.getEntryByDate(today)
+    data.entries.getEntryByDate(today),
+    data.entries.listEntries(historyRange)
   ]);
+  const historyDays = buildReadingHistoryDays({
+    entries: recentEntries,
+    anchorDate: today,
+    dayCount: 14,
+    dailyGoalPages: settings.dailyGoalPages
+  });
   const error = firstValue(params.error);
   const message = firstValue(params.message);
 
@@ -75,6 +85,8 @@ export default async function Home({
       ) : (
         <BookSetupPanel today={today} />
       )}
+
+      <HistoryPanel days={historyDays} />
     </main>
   );
 }
@@ -166,6 +178,86 @@ function TodayPanel({
   );
 }
 
+function HistoryPanel({ days }: { days: ReadingHistoryDay[] }) {
+  const hasEntries = days.some((day) => day.entry);
+
+  return (
+    <section className="history-panel">
+      <div className="history-heading">
+        <div>
+          <p className="eyebrow">{UI_COPY.history.eyebrow}</p>
+          <h2>{UI_COPY.history.heading}</h2>
+        </div>
+        <p className="muted">{UI_COPY.history.copy}</p>
+      </div>
+
+      <div className="history-calendar" aria-label={UI_COPY.history.calendarLabel}>
+        {days.map((day) => (
+          <article
+            className={`history-day level-${day.level}`}
+            key={day.date}
+            title={`${formatShortDate(day.date)}: ${UI_COPY.history.goalStatus[day.level]}`}
+          >
+            <time dateTime={day.date}>{formatDayNumber(day.date)}</time>
+            <span>{formatWeekday(day.date)}</span>
+            <strong>{UI_COPY.history.pagesRead(day.pagesRead)}</strong>
+          </article>
+        ))}
+      </div>
+
+      {hasEntries ? (
+        <div className="history-details">
+          <h3>{UI_COPY.history.detailsHeading}</h3>
+          {days.map((day) => (
+            <DayDetail day={day} key={day.date} />
+          ))}
+        </div>
+      ) : (
+        <div className="history-empty">
+          <h3>{UI_COPY.history.emptyHeading}</h3>
+          <p>{UI_COPY.history.emptyCopy}</p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function DayDetail({ day }: { day: ReadingHistoryDay }) {
+  const status = UI_COPY.history.goalStatus[day.level];
+
+  return (
+    <article className={`history-detail level-${day.level}`}>
+      <div>
+        <time dateTime={day.date}>{formatLongDate(day.date)}</time>
+        <span>{status}</span>
+      </div>
+      {day.entry ? (
+        <dl>
+          <div>
+            <dt>{UI_COPY.history.bookLabel}</dt>
+            <dd>{day.entry.bookTitle}</dd>
+          </div>
+          <div>
+            <dt>{UI_COPY.history.pagesLabel}</dt>
+            <dd>
+              {UI_COPY.history.pageRange(day.entry.startPage, day.entry.endPage)} ·{" "}
+              {UI_COPY.history.pagesRead(day.entry.pagesRead)}
+            </dd>
+          </div>
+          {day.entry.note ? (
+            <div>
+              <dt>{UI_COPY.history.noteLabel}</dt>
+              <dd>{day.entry.note}</dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : (
+        <p>{UI_COPY.history.emptyDayDetail}</p>
+      )}
+    </article>
+  );
+}
+
 function BookSetupPanel({ today }: { today: string }) {
   return (
     <section className="setup-panel">
@@ -204,6 +296,51 @@ function BookSetupPanel({ today }: { today: string }) {
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
+}
+
+function getHistoryRange(today: string, dayCount: number) {
+  return {
+    from: addDays(today, -(dayCount - 1)),
+    to: today
+  };
+}
+
+function addDays(date: string, days: number): string {
+  const parsedDate = new Date(`${date}T00:00:00.000Z`);
+  parsedDate.setUTCDate(parsedDate.getUTCDate() + days);
+
+  return parsedDate.toISOString().slice(0, 10);
+}
+
+function formatDayNumber(date: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit"
+  }).format(parseIsoDate(date));
+}
+
+function formatWeekday(date: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    weekday: "short"
+  }).format(parseIsoDate(date));
+}
+
+function formatShortDate(date: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long"
+  }).format(parseIsoDate(date));
+}
+
+function formatLongDate(date: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  }).format(parseIsoDate(date));
+}
+
+function parseIsoDate(date: string): Date {
+  return new Date(`${date}T00:00:00.000Z`);
 }
 
 function getTodayIsoDate(): string {
