@@ -7,7 +7,7 @@ describe("UI copy", () => {
     expect(UI_COPY.hero.eyebrow).toBe("Книжный квест дня");
     expect(UI_COPY.bookSetup.heading).toBe("Выберите книгу для первого квеста");
     expect(UI_COPY.today.finishedPageLabel).toBe("До какой страницы дошли?");
-    expect(UI_COPY.messages.entrySaved).toBe("Квест дня сохранен. Отличный рывок!");
+    expect(UI_COPY.messages.entrySaved).toBe("Квест дня сохранен. Отличный шаг!");
   });
 
   it("keeps validation messages in Russian", () => {
@@ -26,6 +26,6 @@ describe("UI copy", () => {
 
     expect(visibleCopy).toContain("квест");
     expect(visibleCopy).toContain("маршрут");
-    expect(visibleCopy).toContain("рывок");
+    expect(visibleCopy).toContain("шаг");
   });
 });
