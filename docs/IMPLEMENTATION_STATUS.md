@@ -7,7 +7,7 @@ This tracker records implementation progress for PageStrider.
 - Documentation created: yes
 - App implementation: foundation started
 - Dependencies installed: yes
-- UI created: Phase 4 streaks, metrics, and computed badges
+- UI created: Phase 5 print-friendly teacher report
 - Vercel project: created and linked
 - Supabase local config: initialized
 - Supabase CLI: authenticated
@@ -25,7 +25,7 @@ This tracker records implementation progress for PageStrider.
 | Phase 2: Books and Today page | Complete | Supabase-backed active book setup, Today entry, validation, duplicate-day guard, and current book progress update. |
 | Phase 3: History and Calendar | Complete | Supabase-backed reading history, recent day calendar highlighting, and day details using the shared day level utility. |
 | Phase 4: Streaks, Metrics, and Badges | Complete | Utility-backed current/best streaks, reading metrics, computed badges, and PageStrider-styled progress surfaces. |
-| Phase 5: Teacher Report | Not started | Date range selector, print-friendly report page, summary metrics, reading table, and print CSS. |
+| Phase 5: Teacher Report | Complete | Date range selector, Supabase-backed print-friendly report page, period summary metrics, reading table, browser print button, and A4 print CSS. |
 | Phase 6: Polish and Hardening | Not started | UX polish, mobile layout, empty states, validation messages, edge cases, and final checks. |
 
 ## MVP Guardrails
@@ -45,10 +45,10 @@ This tracker records implementation progress for PageStrider.
 
 ## Next Recommended Step
 
-Start Phase 5 in a new chat by reading:
+Start Phase 6 in a new chat by reading:
 
 - `PROJECT.md`
 - `docs/IMPLEMENTATION_STATUS.md`
 - `docs/INFRASTRUCTURE.md`
 - `docs/codex-phases/00-context.md`
-- `docs/codex-phases/05-teacher-report.md`
+- `docs/codex-phases/06-polish-and-hardening.md`

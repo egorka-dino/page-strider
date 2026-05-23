@@ -76,6 +76,17 @@ export interface ReadingMetrics {
   readingDaysThisWeek: number;
 }
 
+export interface TeacherReportSummary {
+  periodDaysCount: number;
+  totalPagesRead: number;
+  readingDaysCount: number;
+  goalCompletedDaysCount: number;
+  missedDaysCount: number;
+  averagePagesPerReadingDay: number | null;
+  averagePagesPerCalendarDay: number | null;
+  bestDayPages: number;
+}
+
 export interface Badge {
   key: BadgeKey;
   label: string;

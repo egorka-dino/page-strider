@@ -153,6 +153,23 @@ label {
   line-height: 1.55;
 }
 
+.hero-report-link,
+.text-link {
+  color: var(--ps-accent);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.hero-report-link {
+  display: inline-flex;
+  margin-top: 1rem;
+}
+
+.hero-report-link:hover,
+.text-link:hover {
+  text-decoration: underline;
+}
+
 .eyebrow {
   color: var(--ps-accent);
   font-size: 0.78rem;
@@ -745,6 +762,152 @@ label {
   --day-color: var(--ps-day-legendary);
 }
 
+.report-shell {
+  display: grid;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 1040px;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.report-toolbar,
+.report-range-form,
+.teacher-report {
+  border: 1px solid color-mix(in srgb, var(--ps-ink) 10%, transparent);
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  background: var(--ps-paper);
+  box-shadow: var(--ps-shadow-panel, 0 14px 40px color-mix(in srgb, var(--ps-ink) 12%, transparent));
+}
+
+.report-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+}
+
+.report-toolbar h1,
+.report-header h2,
+.report-table-section h3 {
+  margin: 0;
+}
+
+.report-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.print-button {
+  min-width: 8rem;
+}
+
+.report-range-form {
+  align-items: end;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  padding: 1.25rem 1.5rem;
+}
+
+.teacher-report {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.75rem;
+}
+
+.report-header {
+  border-bottom: 2px solid color-mix(in srgb, var(--ps-accent) 20%, transparent);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+  padding-bottom: 1.25rem;
+}
+
+.report-header dl,
+.report-summary {
+  margin: 0;
+}
+
+.report-header dl {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.report-header dl div,
+.report-summary-item {
+  background: color-mix(in srgb, var(--ps-page) 68%, var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 12%, transparent);
+  border-radius: var(--ps-radius-control, 0.375rem);
+  padding: 0.75rem;
+}
+
+.report-header dt,
+.report-summary dt {
+  color: var(--ps-muted-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.report-header dd,
+.report-summary dd {
+  color: var(--ps-ink);
+  font-weight: 800;
+  margin: 0.2rem 0 0;
+}
+
+.report-summary {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.report-summary dd {
+  color: var(--ps-accent);
+  font-size: 1.25rem;
+}
+
+.report-table-section {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.report-table {
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  width: 100%;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid color-mix(in srgb, var(--ps-ink) 16%, transparent);
+  padding: 0.65rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.report-table th {
+  background: color-mix(in srgb, var(--ps-accent) 12%, var(--ps-paper));
+  color: var(--ps-ink);
+  font-weight: 800;
+}
+
+.report-table td {
+  background: #fffdf7;
+}
+
+.report-empty {
+  background: color-mix(in srgb, var(--ps-day-no-reading) 22%, var(--ps-paper));
+  border: 1px dashed color-mix(in srgb, var(--ps-muted-ink) 24%, transparent);
+  border-radius: var(--ps-radius-control, 0.375rem);
+  color: var(--ps-muted-ink);
+  margin: 0;
+  padding: 1rem;
+}
+
 @media (max-width: 760px) {
   .app-shell {
     padding: 1rem;
@@ -752,8 +915,19 @@ label {
 
   .hero-panel,
   .reading-layout,
-  .book-form {
+  .book-form,
+  .report-header,
+  .report-range-form {
     grid-template-columns: 1fr;
+  }
+
+  .report-shell {
+    padding: 1rem;
+  }
+
+  .report-toolbar {
+    align-items: start;
+    display: grid;
   }
 
   .hero-panel {
@@ -786,7 +960,8 @@ label {
   .history-calendar,
   .badge-trail,
   .metric-shelf,
-  .books-grid {
+  .books-grid,
+  .report-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -795,7 +970,129 @@ label {
   .history-calendar,
   .badge-trail,
   .metric-shelf,
-  .books-grid {
+  .books-grid,
+  .report-summary {
     grid-template-columns: 1fr;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  :root {
+    --ps-page: #ffffff;
+    --ps-paper: #ffffff;
+    --ps-ink: #111111;
+    --ps-muted-ink: #444444;
+    --ps-accent: #111111;
+  }
+
+  html,
+  body {
+    background: #ffffff;
+    color: #111111;
+    min-height: auto;
+  }
+
+  body {
+    font-size: 10.5pt;
+  }
+
+  button,
+  .print-hidden {
+    display: none !important;
+  }
+
+  .report-shell {
+    display: block;
+    margin: 0;
+    max-width: none;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .teacher-report {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    padding: 0;
+  }
+
+  .report-header {
+    border-bottom: 1.5pt solid #111111;
+    display: grid;
+    gap: 8mm;
+    grid-template-columns: 1fr 78mm;
+    margin-bottom: 7mm;
+    padding-bottom: 5mm;
+  }
+
+  .report-header h2 {
+    font-size: 20pt;
+    line-height: 1.15;
+  }
+
+  .eyebrow {
+    color: #444444;
+    font-size: 8pt;
+  }
+
+  .report-header dl,
+  .report-summary {
+    gap: 2.5mm;
+  }
+
+  .report-header dl div,
+  .report-summary-item {
+    background: #ffffff;
+    border: 1pt solid #c9c9c9;
+    border-radius: 0;
+    padding: 2.5mm;
+  }
+
+  .report-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 7mm;
+  }
+
+  .report-summary dd {
+    color: #111111;
+    font-size: 13pt;
+  }
+
+  .report-table-section h3 {
+    font-size: 13pt;
+    margin: 0 0 3mm;
+  }
+
+  .report-table {
+    font-size: 8.8pt;
+    page-break-inside: auto;
+  }
+
+  .report-table tr {
+    page-break-inside: avoid;
+  }
+
+  .report-table th,
+  .report-table td {
+    background: #ffffff;
+    border: 1pt solid #b8b8b8;
+    padding: 2.2mm;
+  }
+
+  .report-table thead {
+    display: table-header-group;
+  }
+
+  .report-empty {
+    background: #ffffff;
+    border: 1pt solid #b8b8b8;
+    border-radius: 0;
   }
 }

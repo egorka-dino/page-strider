@@ -11,6 +11,7 @@ import {
   type ReadingEntry
 } from "@/domain";
 import { createSupabaseDataAccess } from "@/data";
+import Link from "next/link";
 
 import {
   activateBookAction,
@@ -93,6 +94,9 @@ export default async function Home({
           <p className="hero-copy">
             {UI_COPY.hero.copy}
           </p>
+          <Link className="hero-report-link" href="/report">
+            {UI_COPY.hero.reportLink}
+          </Link>
         </div>
         <div className="goal-token">
           <span>{settings.dailyGoalPages}</span>

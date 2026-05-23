@@ -8,7 +8,8 @@ export const UI_COPY = {
     copy: "Каждый день открывает новый отрезок маршрута: прочитайте страницы, сохраните шаг и двигайтесь к финишу книги.",
     goalLabel: "цель квеста",
     pathLabel: "Маршрут чтения",
-    pathSteps: ["Старт", "Шаг", "Награда"]
+    pathSteps: ["Старт", "Шаг", "Награда"],
+    reportLink: "Отчет для учителя"
   },
   messages: {
     bookCreated: "Книга добавлена. Первый квест готов!",
@@ -145,6 +146,48 @@ export const UI_COPY = {
       `${formatDate(date)}: ${startPage}-${endPage}, ${pagesRead} стр.`,
     switchLocked:
       "Сегодня уже есть запись чтения, поэтому сменить активную книгу можно будет завтра."
+  },
+  report: {
+    toolbarEyebrow: "Печатный маршрут",
+    toolbarHeading: "Отчет для учителя",
+    backLink: "Вернуться к дневнику",
+    printButton: "Печать",
+    fromLabel: "Начало периода",
+    toLabel: "Конец периода",
+    applyRangeButton: "Показать период",
+    reportEyebrow: "Читательский отчет",
+    reportHeading: "Маршрут чтения за период",
+    readerLabel: "Читатель",
+    readerFallback: "Читатель",
+    periodLabel: "Период",
+    periodValue: (from: string, to: string) => `${formatFullDate(from)} - ${formatFullDate(to)}`,
+    dailyGoalLabel: "Цель дня",
+    summaryLabel: "Итоги периода",
+    summary: {
+      totalPagesRead: "Всего страниц",
+      readingDaysCount: "Дней с чтением",
+      goalCompletedDaysCount: "Цель выполнена",
+      averagePagesPerReadingDay: "Средний шаг",
+      bestDayPages: "Лучший день",
+      periodDaysCount: "Дней в периоде"
+    },
+    pagesValue: (pages: number) => `${formatNumber(pages)} стр.`,
+    daysValue: (days: number) => `${formatNumber(days)} дн.`,
+    noAverage: "пока нет",
+    tableHeading: "Дни чтения",
+    table: {
+      date: "Дата",
+      book: "Книга",
+      pages: "Страницы",
+      pagesRead: "Прочитано",
+      goalStatus: "Цель",
+      note: "Заметка"
+    },
+    pageRange: (startPage: number, endPage: number) => `${startPage}-${endPage}`,
+    goalDone: "выполнена",
+    goalPartial: "частично",
+    emptyNote: "-",
+    emptyRange: "В выбранном периоде пока нет сохраненных читательских шагов."
   }
 } as const;
 
@@ -158,5 +201,13 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat("ru-RU", {
     day: "numeric",
     month: "long"
+  }).format(new Date(`${value}T00:00:00.000Z`));
+}
+
+function formatFullDate(value: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
   }).format(new Date(`${value}T00:00:00.000Z`));
 }
