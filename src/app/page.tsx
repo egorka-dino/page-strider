@@ -12,7 +12,14 @@ import {
 } from "@/domain";
 import { createSupabaseDataAccess } from "@/data";
 
-import { createBookAction, recordTodayAction } from "./actions";
+import {
+  activateBookAction,
+  createBookAction,
+  finishBookAction,
+  pauseBookAction,
+  recordTodayAction,
+  updateBookDetailsAction
+} from "./actions";
 import { UI_COPY } from "./ui-copy";
 
 export const dynamic = "force-dynamic";
@@ -24,12 +31,17 @@ const errorMessages: Record<string, string> = {
   entry_exists: UI_COPY.errors.entryExists,
   end_before_start: UI_COPY.errors.endBeforeStart,
   end_after_total: UI_COPY.errors.endAfterTotal,
-  invalid_book: UI_COPY.errors.invalidBook
+  invalid_book: UI_COPY.errors.invalidBook,
+  book_finished: UI_COPY.errors.bookFinished
 };
 
 const messageText: Record<string, string> = {
   book_created: UI_COPY.messages.bookCreated,
-  entry_saved: UI_COPY.messages.entrySaved
+  entry_saved: UI_COPY.messages.entrySaved,
+  book_updated: UI_COPY.messages.bookUpdated,
+  book_paused: UI_COPY.messages.bookPaused,
+  book_activated: UI_COPY.messages.bookActivated,
+  book_finished: UI_COPY.messages.bookFinished
 };
 
 export default async function Home({
@@ -106,6 +118,13 @@ export default async function Home({
         <BookSetupPanel today={today} />
       )}
 
+      <BooksPanel
+        activeBook={activeBook}
+        books={books}
+        entries={allEntries}
+        today={today}
+        todayEntry={todayEntry}
+      />
       <ProgressPanel metrics={metrics} badges={badges} />
       <HistoryPanel days={historyDays} />
     </main>
@@ -136,7 +155,7 @@ function TodayPanel({
         <p className="eyebrow">{UI_COPY.today.activeBookEyebrow}</p>
         <h2>{activeBook.title}</h2>
         <p className="muted">
-          {UI_COPY.today.authorPrefix} {activeBook.author}
+          {UI_COPY.today.authorPrefix} {activeBook.author || UI_COPY.today.unknownAuthor}
         </p>
 
         <div className="progress-track" aria-label={UI_COPY.today.progressLabel(progressPercent)}>
@@ -364,6 +383,201 @@ function ProgressPanel({
   );
 }
 
+function BooksPanel({
+  activeBook,
+  books,
+  entries,
+  today,
+  todayEntry
+}: {
+  activeBook: Book | null;
+  books: Book[];
+  entries: ReadingEntry[];
+  today: string;
+  todayEntry: ReadingEntry | null;
+}) {
+  const pausedBooks = books.filter((book) => book.status === "paused");
+  const finishedBooks = books.filter((book) => book.status === "finished");
+  const canSwitchToday = !todayEntry;
+
+  return (
+    <section className="books-panel">
+      <div className="books-heading">
+        <div>
+          <p className="eyebrow">{UI_COPY.books.eyebrow}</p>
+          <h2>{UI_COPY.books.heading}</h2>
+        </div>
+        <p className="muted">{UI_COPY.books.copy}</p>
+      </div>
+
+      <div className="books-grid">
+        <div className="book-column">
+          <h3>{UI_COPY.books.activeHeading}</h3>
+          {activeBook ? (
+            <BookCard
+              book={activeBook}
+              entries={entries}
+              canActivate={false}
+              canPause
+              canFinish
+            />
+          ) : (
+            <p className="shelf-empty">{UI_COPY.books.noActive}</p>
+          )}
+          {activeBook && canSwitchToday ? <BookSetupPanel today={today} compact /> : null}
+          {activeBook && !canSwitchToday ? (
+            <p className="form-hint">{UI_COPY.books.switchLocked}</p>
+          ) : null}
+        </div>
+
+        <div className="book-column">
+          <h3>{UI_COPY.books.pausedHeading}</h3>
+          {pausedBooks.length > 0 ? (
+            pausedBooks.map((book) => (
+              <BookCard
+                book={book}
+                canActivate={canSwitchToday}
+                canFinish
+                canPause={false}
+                entries={entries}
+                key={book.id}
+              />
+            ))
+          ) : (
+            <p className="shelf-empty">{UI_COPY.books.noPaused}</p>
+          )}
+          {!canSwitchToday ? (
+            <p className="form-hint">{UI_COPY.books.switchLocked}</p>
+          ) : null}
+        </div>
+
+        <div className="book-column">
+          <h3>{UI_COPY.books.finishedHeading}</h3>
+          {finishedBooks.length > 0 ? (
+            finishedBooks.map((book) => (
+              <BookCard
+                book={book}
+                canActivate={false}
+                canFinish={false}
+                canPause={false}
+                entries={entries}
+                key={book.id}
+              />
+            ))
+          ) : (
+            <p className="shelf-empty">{UI_COPY.books.noFinished}</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BookCard({
+  book,
+  canActivate,
+  canFinish,
+  canPause,
+  entries
+}: {
+  book: Book;
+  canActivate: boolean;
+  canFinish: boolean;
+  canPause: boolean;
+  entries: ReadingEntry[];
+}) {
+  const bookEntries = entries.filter((entry) => entry.bookId === book.id);
+
+  return (
+    <article className="shelf-book">
+      <div className="shelf-book-heading">
+        <div>
+          <span>{UI_COPY.books.status[book.status]}</span>
+          <h4>{book.title}</h4>
+          <p className="muted">{book.author || UI_COPY.today.unknownAuthor}</p>
+        </div>
+        <strong>{UI_COPY.books.pageProgress(book.currentPage, book.totalPages)}</strong>
+      </div>
+
+      <p className="book-dates">
+        {UI_COPY.books.startedDate(book.startedDate)}
+        {book.finishedDate ? ` · ${UI_COPY.books.finishedDate(book.finishedDate)}` : ""}
+      </p>
+
+      <details className="book-edit">
+        <summary>{UI_COPY.books.editHeading}</summary>
+        <form action={updateBookDetailsAction} className="book-edit-form">
+          <input name="bookId" type="hidden" value={book.id} />
+          <label>
+            {UI_COPY.bookSetup.titleLabel}
+            <input name="title" defaultValue={book.title} required />
+          </label>
+          <label>
+            {UI_COPY.bookSetup.authorLabel}
+            <input name="author" defaultValue={book.author} required />
+          </label>
+          <label>
+            {UI_COPY.bookSetup.totalPagesLabel}
+            <input
+              name="totalPages"
+              type="number"
+              min={Math.max(book.startPage, book.currentPage)}
+              defaultValue={book.totalPages}
+              required
+            />
+          </label>
+          <button type="submit">{UI_COPY.books.saveDetails}</button>
+        </form>
+      </details>
+
+      <div className="book-actions">
+        {canPause ? (
+          <form action={pauseBookAction}>
+            <input name="bookId" type="hidden" value={book.id} />
+            <button type="submit" className="secondary-button">
+              {UI_COPY.books.pauseAction}
+            </button>
+          </form>
+        ) : null}
+        {canActivate ? (
+          <form action={activateBookAction}>
+            <input name="bookId" type="hidden" value={book.id} />
+            <button type="submit">{UI_COPY.books.activateAction}</button>
+          </form>
+        ) : null}
+        {canFinish ? (
+          <form action={finishBookAction}>
+            <input name="bookId" type="hidden" value={book.id} />
+            <button type="submit" className="secondary-button">
+              {UI_COPY.books.finishAction}
+            </button>
+          </form>
+        ) : null}
+      </div>
+
+      <details className="book-history">
+        <summary>{UI_COPY.books.historyHeading}</summary>
+        {bookEntries.length > 0 ? (
+          <ul>
+            {bookEntries.map((entry) => (
+              <li key={entry.id}>
+                {UI_COPY.books.historyEntry(
+                  entry.date,
+                  entry.startPage,
+                  entry.endPage,
+                  entry.pagesRead
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>{UI_COPY.books.noBookHistory}</p>
+        )}
+      </details>
+    </article>
+  );
+}
+
 function DayDetail({ day }: { day: ReadingHistoryDay }) {
   const status = UI_COPY.history.goalStatus[day.level];
 
@@ -400,9 +614,9 @@ function DayDetail({ day }: { day: ReadingHistoryDay }) {
   );
 }
 
-function BookSetupPanel({ today }: { today: string }) {
+function BookSetupPanel({ today, compact = false }: { today: string; compact?: boolean }) {
   return (
-    <section className="setup-panel">
+    <section className={compact ? "setup-panel compact-setup" : "setup-panel"}>
       <p className="eyebrow">{UI_COPY.bookSetup.eyebrow}</p>
       <h2>{UI_COPY.bookSetup.heading}</h2>
       <form action={createBookAction} className="book-form">

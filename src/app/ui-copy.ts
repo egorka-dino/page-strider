@@ -12,7 +12,11 @@ export const UI_COPY = {
   },
   messages: {
     bookCreated: "Книга добавлена. Первый квест готов!",
-    entrySaved: "Квест дня сохранен. Отличный шаг!"
+    entrySaved: "Квест дня сохранен. Отличный шаг!",
+    bookUpdated: "Детали книги обновлены.",
+    bookPaused: "Книга ждет на паузе. Можно выбрать следующий маршрут.",
+    bookActivated: "Книга снова активна. Маршрут продолжен!",
+    bookFinished: "Книжный маршрут завершен!"
   },
   errors: {
     bookDetailsRequired: "Добавьте название и автора, чтобы открыть книжный квест.",
@@ -21,11 +25,13 @@ export const UI_COPY = {
     entryExists: "Квест за сегодня уже засчитан.",
     endBeforeStart: "Финиш шага должен быть после последней уже прочитанной страницы.",
     endAfterTotal: "Финиш шага не может быть дальше конца книги.",
-    invalidBook: "Перед стартом нужны корректные данные книги."
+    invalidBook: "Перед стартом нужны корректные данные книги.",
+    bookFinished: "Завершенную книгу нельзя снова сделать активной."
   },
   today: {
     activeBookEyebrow: "Текущий маршрут",
     authorPrefix: "автор:",
+    unknownAuthor: "Автор не указан",
     progressLabel: (progressPercent: number) => `Готово на ${progressPercent}%`,
     readStat: "Пройдено",
     leftStat: "До финиша",
@@ -100,7 +106,7 @@ export const UI_COPY = {
   },
   bookSetup: {
     eyebrow: "Старт маршрута",
-    heading: "Выберите книгу для первого квеста",
+    heading: "Открыть новый книжный маршрут",
     titleLabel: "Название",
     authorLabel: "Автор",
     totalPagesLabel: "Сколько страниц в книге?",
@@ -108,6 +114,37 @@ export const UI_COPY = {
     currentPageLabel: "Где сейчас закладка?",
     startedDateLabel: "Дата начала",
     submitButton: "Открыть квест"
+  },
+  books: {
+    eyebrow: "Книжная полка",
+    heading: "Маршруты книг",
+    copy: "Здесь можно поставить книгу на паузу, вернуться к отложенной или закрыть завершенный путь.",
+    activeHeading: "Активная книга",
+    pausedHeading: "На паузе",
+    finishedHeading: "Завершенные книги",
+    noActive: "Сейчас нет активной книги. Откройте новый маршрут или вернитесь к книге на паузе.",
+    noPaused: "Отложенных книг пока нет.",
+    noFinished: "Завершенные книги появятся после первых финалов.",
+    status: {
+      reading: "активна",
+      paused: "на паузе",
+      finished: "завершена"
+    },
+    pageProgress: (currentPage: number, totalPages: number) =>
+      `Закладка: ${currentPage} из ${totalPages}`,
+    startedDate: (date: string) => `Старт: ${formatDate(date)}`,
+    finishedDate: (date: string) => `Финиш: ${formatDate(date)}`,
+    editHeading: "Детали книги",
+    saveDetails: "Сохранить детали",
+    pauseAction: "Поставить на паузу",
+    activateAction: "Сделать активной",
+    finishAction: "Завершить книгу",
+    historyHeading: "История книги",
+    noBookHistory: "У этой книги пока нет сохраненных шагов.",
+    historyEntry: (date: string, startPage: number, endPage: number, pagesRead: number) =>
+      `${formatDate(date)}: ${startPage}-${endPage}, ${pagesRead} стр.`,
+    switchLocked:
+      "Сегодня уже есть запись чтения, поэтому сменить активную книгу можно будет завтра."
   }
 } as const;
 
@@ -115,4 +152,11 @@ function formatNumber(value: number): string {
   return new Intl.NumberFormat("ru-RU", {
     maximumFractionDigits: 1
   }).format(value);
+}
+
+function formatDate(value: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long"
+  }).format(new Date(`${value}T00:00:00.000Z`));
 }

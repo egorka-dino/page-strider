@@ -12,6 +12,7 @@ export interface ReaderRepository {
 
 export interface BookRepository {
   getActiveBook(): Promise<Book | null>;
+  getBookById(id: string): Promise<Book | null>;
   listBooks(): Promise<Book[]>;
   createBook(book: Omit<Book, "id">): Promise<Book>;
   updateBook(book: Book): Promise<Book>;

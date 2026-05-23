@@ -94,7 +94,8 @@ label {
 .entry-panel,
 .setup-panel,
 .history-panel,
-.progress-panel {
+.progress-panel,
+.books-panel {
   border: 1px solid color-mix(in srgb, var(--ps-ink) 10%, transparent);
   border-radius: var(--ps-radius-panel, 0.5rem);
   background: var(--ps-paper);
@@ -234,7 +235,8 @@ label {
 .entry-panel,
 .setup-panel,
 .history-panel,
-.progress-panel {
+.progress-panel,
+.books-panel {
   padding: 1.5rem;
 }
 
@@ -291,13 +293,15 @@ label {
 }
 
 .history-panel,
-.progress-panel {
+.progress-panel,
+.books-panel {
   display: grid;
   gap: 1.25rem;
 }
 
 .history-heading,
-.progress-heading {
+.progress-heading,
+.books-heading {
   align-items: end;
   display: flex;
   gap: 1rem;
@@ -305,7 +309,8 @@ label {
 }
 
 .history-heading .muted,
-.progress-heading .muted {
+.progress-heading .muted,
+.books-heading .muted {
   max-width: 28rem;
   line-height: 1.5;
   margin: 0;
@@ -313,8 +318,140 @@ label {
 
 .progress-heading h2,
 .progress-panel h3,
-.badge-token h4 {
+.badge-token h4,
+.books-panel h2,
+.books-panel h3,
+.shelf-book h4 {
   margin: 0;
+}
+
+.books-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.book-column {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+}
+
+.book-column h3 {
+  color: var(--ps-accent);
+  font-size: 1rem;
+}
+
+.shelf-book {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ps-spark) 10%, var(--ps-paper)), var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 14%, transparent);
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.shelf-book-heading {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.shelf-book-heading span {
+  background: color-mix(in srgb, var(--ps-accent) 12%, var(--ps-paper));
+  border-radius: 999px;
+  color: var(--ps-accent);
+  display: inline-flex;
+  font-size: 0.74rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+  padding: 0.25rem 0.55rem;
+}
+
+.shelf-book-heading strong,
+.book-dates {
+  color: var(--ps-muted-ink);
+  font-size: 0.84rem;
+}
+
+.book-dates {
+  margin: 0;
+}
+
+.book-edit-form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.book-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.book-actions form {
+  flex: 1 1 9rem;
+}
+
+.book-actions button,
+.book-edit-form button {
+  width: 100%;
+}
+
+.secondary-button {
+  background: color-mix(in srgb, var(--ps-accent) 12%, var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 26%, transparent);
+  color: var(--ps-accent);
+}
+
+.book-edit,
+.book-history {
+  color: var(--ps-muted-ink);
+  font-size: 0.9rem;
+}
+
+.book-edit summary,
+.book-history summary {
+  color: var(--ps-ink);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.book-edit-form {
+  margin-top: 0.7rem;
+}
+
+.book-history ul {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.7rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.book-history p,
+.shelf-empty {
+  margin: 0;
+}
+
+.shelf-empty {
+  background: color-mix(in srgb, var(--ps-day-no-reading) 22%, var(--ps-paper));
+  border: 1px dashed color-mix(in srgb, var(--ps-muted-ink) 24%, transparent);
+  border-radius: var(--ps-radius-control, 0.375rem);
+  color: var(--ps-muted-ink);
+  padding: 1rem;
+}
+
+.compact-setup {
+  box-shadow: none;
+  padding: 1rem;
+}
+
+.compact-setup h2 {
+  font-size: 1.15rem;
+}
+
+.compact-setup .book-form {
+  grid-template-columns: 1fr;
 }
 
 .streak-band {
@@ -640,6 +777,7 @@ label {
 
   .history-heading,
   .progress-heading,
+  .books-heading,
   .streak-band {
     align-items: start;
     display: grid;
@@ -647,7 +785,8 @@ label {
 
   .history-calendar,
   .badge-trail,
-  .metric-shelf {
+  .metric-shelf,
+  .books-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -655,7 +794,8 @@ label {
 @media (max-width: 520px) {
   .history-calendar,
   .badge-trail,
-  .metric-shelf {
+  .metric-shelf,
+  .books-grid {
     grid-template-columns: 1fr;
   }
 }

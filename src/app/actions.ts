@@ -5,17 +5,28 @@ import { redirect } from "next/navigation";
 
 import {
   createActiveBookDraft,
+  finishBook,
+  pauseBook,
+  prepareBookActivation,
   prepareTodayReadingEntry
 } from "@/domain";
 import { createSupabaseDataAccess } from "@/data";
 
 export async function createBookAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const today = getTodayIsoDate();
+  const todayEntry = await data.entries.getEntryByDate(today);
+
+  if (todayEntry) {
+    redirectWithError("entry_exists");
+  }
+
   const title = getString(formData, "title");
   const author = getString(formData, "author");
   const totalPages = getNumber(formData, "totalPages");
   const startPage = getNumber(formData, "startPage");
   const currentPage = getNumber(formData, "currentPage");
-  const startedDate = getString(formData, "startedDate") || getTodayIsoDate();
+  const startedDate = getString(formData, "startedDate") || today;
 
   if (!title || !author) {
     redirectWithError("book_details_required");
@@ -28,8 +39,6 @@ export async function createBookAction(formData: FormData): Promise<void> {
   if (startPage > totalPages || currentPage >= totalPages) {
     redirectWithError("invalid_book_pages");
   }
-
-  const data = createSupabaseDataAccess();
 
   await data.books.createBook(
     createActiveBookDraft({
@@ -44,6 +53,88 @@ export async function createBookAction(formData: FormData): Promise<void> {
 
   revalidatePath("/");
   redirect("/?message=book_created");
+}
+
+export async function updateBookDetailsAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const book = await getBookFromForm(data, formData);
+  const title = getString(formData, "title");
+  const author = getString(formData, "author");
+  const totalPages = getNumber(formData, "totalPages");
+
+  if (!title || !author) {
+    redirectWithError("book_details_required");
+  }
+
+  if (totalPages < book.currentPage || totalPages < book.startPage) {
+    redirectWithError("invalid_book_pages");
+  }
+
+  await data.books.updateBook({
+    ...book,
+    title,
+    author,
+    totalPages
+  });
+
+  revalidatePath("/");
+  redirect("/?message=book_updated");
+}
+
+export async function pauseBookAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const book = await getBookFromForm(data, formData);
+
+  if (book.status !== "reading") {
+    redirectWithError("invalid_book");
+  }
+
+  await data.books.updateBook(pauseBook(book));
+
+  revalidatePath("/");
+  redirect("/?message=book_paused");
+}
+
+export async function activateBookAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const today = getTodayIsoDate();
+  const [targetBook, activeBook, todayEntry] = await Promise.all([
+    getBookFromForm(data, formData),
+    data.books.getActiveBook(),
+    data.entries.getEntryByDate(today)
+  ]);
+  const result = prepareBookActivation({
+    targetBook,
+    activeBook,
+    todayEntry
+  });
+
+  if (!result.ok) {
+    redirectWithError(result.error);
+  }
+
+  if (result.previousActiveBook) {
+    await data.books.updateBook(result.previousActiveBook);
+  }
+
+  await data.books.updateBook(result.activatedBook);
+
+  revalidatePath("/");
+  redirect("/?message=book_activated");
+}
+
+export async function finishBookAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const book = await getBookFromForm(data, formData);
+
+  if (book.status === "finished") {
+    redirectWithError("book_finished");
+  }
+
+  await data.books.updateBook(finishBook(book, getTodayIsoDate()));
+
+  revalidatePath("/");
+  redirect("/?message=book_finished");
 }
 
 export async function recordTodayAction(formData: FormData): Promise<void> {
@@ -85,6 +176,20 @@ function getNumber(formData: FormData, key: string): number {
   const value = Number(getString(formData, key));
 
   return Number.isFinite(value) ? Math.floor(value) : 0;
+}
+
+async function getBookFromForm(
+  data: ReturnType<typeof createSupabaseDataAccess>,
+  formData: FormData
+) {
+  const bookId = getString(formData, "bookId");
+  const book = bookId ? await data.books.getBookById(bookId) : null;
+
+  if (!book) {
+    redirectWithError("invalid_book");
+  }
+
+  return book;
 }
 
 function getTodayIsoDate(): string {
