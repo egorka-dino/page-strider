@@ -580,7 +580,10 @@ label {
 }
 
 .shelf-book-compact {
+  align-content: start;
   gap: 0.55rem;
+  grid-template-rows: auto auto auto 1fr auto;
+  min-height: 11.25rem;
   padding: 0.7rem;
 }
 
@@ -600,8 +603,14 @@ label {
 }
 
 .shelf-book-compact .shelf-book-heading h4 {
+  display: -webkit-box;
   font-size: 0.94rem;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   line-height: 1.16;
+  min-height: 2.18rem;
+  overflow: hidden;
 }
 
 .shelf-book-compact .shelf-book-heading .muted {
@@ -614,7 +623,13 @@ label {
 }
 
 .shelf-book-compact .book-dates {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   line-height: 1.3;
+  min-height: 2.04rem;
+  overflow: hidden;
 }
 
 .shelf-book-heading {
@@ -693,6 +708,7 @@ label {
 }
 
 .book-card-link {
+  align-self: end;
   color: var(--ps-ink);
   font-size: 0.82rem;
   font-weight: 800;
