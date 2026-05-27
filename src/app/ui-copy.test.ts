@@ -34,6 +34,9 @@ describe("UI copy", () => {
       UI_COPY.history.heading,
       UI_COPY.history.emptyHeading,
       UI_COPY.books.copy,
+      UI_COPY.books.activeTrailLabel,
+      UI_COPY.books.progressLabel(42),
+      UI_COPY.books.openArchiveCard,
       UI_COPY.bookSetup.submitButton
     ].join(" ");
 

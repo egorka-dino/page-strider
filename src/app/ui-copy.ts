@@ -154,10 +154,14 @@ export const UI_COPY = {
   books: {
     eyebrow: "Книжная полка",
     heading: "Маршруты книг",
-    copy: "Здесь можно поставить книгу на паузу, вернуться к отложенной или закрыть завершенный путь.",
+    copy: "Полка помогает быстро увидеть главный маршрут, отложенные книги и уже пройденные финалы.",
     activeHeading: "Активная книга",
     pausedHeading: "На паузе",
     finishedHeading: "Завершенные книги",
+    activeTrailLabel: "главный маршрут",
+    pausedTrailLabel: "ждут продолжения",
+    finishedTrailLabel: "финалы полки",
+    sectionCount: (count: number) => `${formatNumber(count)} шт.`,
     noActive: "Сейчас нет активной книги. Откройте новый маршрут или вернитесь к книге на паузе.",
     noPaused: "Отложенных книг пока нет.",
     noFinished: "Завершенные книги появятся после первых финалов.",
@@ -168,6 +172,7 @@ export const UI_COPY = {
     },
     pageProgress: (currentPage: number, totalPages: number) =>
       `Закладка: ${currentPage} из ${totalPages}`,
+    progressLabel: (percent: number) => `Пройдено ${formatNumber(percent)}% маршрута`,
     startedDate: (date: string) => `Старт: ${formatDate(date)}`,
     finishedDate: (date: string) => `Финиш: ${formatDate(date)}`,
     editHeading: "Детали книги",
@@ -175,6 +180,7 @@ export const UI_COPY = {
     pauseAction: "Поставить на паузу",
     activateAction: "Сделать активной",
     finishAction: "Завершить книгу",
+    openArchiveCard: "Открыть карточку",
     historyHeading: "История книги",
     noBookHistory: "У этой книги пока нет сохраненных шагов.",
     historyEntryWithBookmark: (

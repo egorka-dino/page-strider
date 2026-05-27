@@ -1,4 +1,4 @@
-import type { Book, ReadingEntry } from "@/domain";
+import { calculateBookProgress, type Book, type ReadingEntry } from "@/domain";
 
 import {
   activateBookAction,
@@ -36,9 +36,13 @@ export function BooksPanel({
         <p className="muted">{UI_COPY.books.copy}</p>
       </div>
 
-      <div className="books-grid">
-        <div className="book-column">
-          <h3>{UI_COPY.books.activeHeading}</h3>
+      <div className="books-route-grid">
+        <div className="book-column book-column-featured">
+          <SectionHeading
+            count={activeBook ? 1 : 0}
+            label={UI_COPY.books.activeTrailLabel}
+            title={UI_COPY.books.activeHeading}
+          />
           {activeBook ? (
             <BookCard
               book={activeBook}
@@ -57,7 +61,11 @@ export function BooksPanel({
         </div>
 
         <div className="book-column">
-          <h3>{UI_COPY.books.pausedHeading}</h3>
+          <SectionHeading
+            count={pausedBooks.length}
+            label={UI_COPY.books.pausedTrailLabel}
+            title={UI_COPY.books.pausedHeading}
+          />
           {pausedBooks.length > 0 ? (
             pausedBooks.map((book) => (
               <BookCard
@@ -76,11 +84,17 @@ export function BooksPanel({
             <p className="form-hint">{UI_COPY.books.switchLocked}</p>
           ) : null}
         </div>
+      </div>
 
-        <div className="book-column">
-          <h3>{UI_COPY.books.finishedHeading}</h3>
-          {finishedBooks.length > 0 ? (
-            finishedBooks.map((book) => (
+      <div className="finished-stack">
+        <SectionHeading
+          count={finishedBooks.length}
+          label={UI_COPY.books.finishedTrailLabel}
+          title={UI_COPY.books.finishedHeading}
+        />
+        {finishedBooks.length > 0 ? (
+          <div className="finished-book-grid">
+            {finishedBooks.map((book) => (
               <BookCard
                 book={book}
                 canActivate={false}
@@ -88,14 +102,35 @@ export function BooksPanel({
                 canPause={false}
                 entries={entries}
                 key={book.id}
+                compact
               />
-            ))
-          ) : (
-            <p className="shelf-empty">{UI_COPY.books.noFinished}</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="shelf-empty">{UI_COPY.books.noFinished}</p>
+        )}
       </div>
     </section>
+  );
+}
+
+function SectionHeading({
+  count,
+  label,
+  title
+}: {
+  count: number;
+  label: string;
+  title: string;
+}) {
+  return (
+    <div className="book-column-heading">
+      <div>
+        <span>{label}</span>
+        <h3>{title}</h3>
+      </div>
+      <strong>{UI_COPY.books.sectionCount(count)}</strong>
+    </div>
   );
 }
 
@@ -104,32 +139,22 @@ function BookCard({
   canActivate,
   canFinish,
   canPause,
-  entries
+  entries,
+  compact = false
 }: {
   book: Book;
   canActivate: boolean;
   canFinish: boolean;
   canPause: boolean;
   entries: ReadingEntry[];
+  compact?: boolean;
 }) {
   const bookEntries = entries.filter((entry) => entry.bookId === book.id);
+  const progress = calculateBookProgress(book);
+  const progressPercent = Math.round(progress.progress * 100);
 
-  return (
-    <article className="shelf-book">
-      <div className="shelf-book-heading">
-        <div>
-          <span>{UI_COPY.books.status[book.status]}</span>
-          <h4>{book.title}</h4>
-          <p className="muted">{book.author || UI_COPY.today.unknownAuthor}</p>
-        </div>
-        <strong>{UI_COPY.books.pageProgress(book.currentPage, book.totalPages)}</strong>
-      </div>
-
-      <p className="book-dates">
-        {UI_COPY.books.startedDate(book.startedDate)}
-        {book.finishedDate ? ` · ${UI_COPY.books.finishedDate(book.finishedDate)}` : ""}
-      </p>
-
+  const details = (
+    <>
       <details className="book-edit">
         <summary>{UI_COPY.books.editHeading}</summary>
         <form action={updateBookDetailsAction} className="book-edit-form">
@@ -195,6 +220,43 @@ function BookCard({
           <p>{UI_COPY.books.noBookHistory}</p>
         )}
       </details>
+    </>
+  );
+
+  return (
+    <article
+      className={compact ? "shelf-book shelf-book-compact" : "shelf-book"}
+      data-status={book.status}
+    >
+      <div className="shelf-book-heading">
+        <div className="book-spine" aria-hidden="true">
+          <span />
+        </div>
+        <div>
+          <span>{UI_COPY.books.status[book.status]}</span>
+          <h4>{book.title}</h4>
+          <p className="muted">{book.author || UI_COPY.today.unknownAuthor}</p>
+        </div>
+        <strong>{UI_COPY.books.pageProgress(book.currentPage, book.totalPages)}</strong>
+      </div>
+
+      <div className="book-progress" aria-label={UI_COPY.books.progressLabel(progressPercent)}>
+        <span style={{ width: `${progressPercent}%` }} />
+      </div>
+
+      <p className="book-dates">
+        {UI_COPY.books.startedDate(book.startedDate)}
+        {book.finishedDate ? ` · ${UI_COPY.books.finishedDate(book.finishedDate)}` : ""}
+      </p>
+
+      {compact ? (
+        <details className="book-compact-actions">
+          <summary>{UI_COPY.books.openArchiveCard}</summary>
+          <div className="book-compact-actions-body">{details}</div>
+        </details>
+      ) : (
+        details
+      )}
     </article>
   );
 }

@@ -457,10 +457,25 @@ label {
   padding: 0.75rem;
 }
 
-.books-grid {
+.books-route-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(16rem, 1.15fr) minmax(14rem, 0.85fr);
+}
+
+.finished-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.finished-stack .book-column-heading {
+  min-height: auto;
+}
+
+.finished-book-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(8.4rem, 1fr));
 }
 
 .book-column {
@@ -469,24 +484,141 @@ label {
   gap: 0.75rem;
 }
 
+.book-column-heading {
+  align-items: center;
+  background: color-mix(in srgb, var(--ps-page) 62%, var(--ps-paper));
+  border: 1px solid color-mix(in srgb, var(--ps-accent) 13%, transparent);
+  border-radius: var(--ps-radius-panel, 0.5rem);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  min-height: 4.25rem;
+  padding: 0.75rem;
+}
+
+.book-column-heading span,
+.book-column-heading strong {
+  color: var(--ps-muted-ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.book-column-heading strong {
+  background: color-mix(in srgb, var(--ps-spark) 24%, var(--ps-paper));
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--ps-ink) 82%, var(--ps-warning));
+  flex: 0 0 auto;
+  padding: 0.3rem 0.55rem;
+  text-transform: none;
+}
+
 .book-column h3 {
   color: var(--ps-accent);
   font-size: 1rem;
 }
 
+.book-column-featured .book-column-heading {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--ps-spark) 28%, var(--ps-paper)), var(--ps-paper));
+}
+
 .shelf-book {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--ps-spark) 10%, var(--ps-paper)), var(--ps-paper));
+    linear-gradient(180deg, color-mix(in srgb, var(--ps-spark) 8%, var(--ps-paper)), var(--ps-paper));
   border: 1px solid color-mix(in srgb, var(--ps-accent) 14%, transparent);
   border-radius: var(--ps-radius-panel, 0.5rem);
   display: grid;
   gap: 0.9rem;
   padding: 1rem;
+  position: relative;
+}
+
+.shelf-book[data-status="reading"] {
+  border-color: color-mix(in srgb, var(--ps-accent) 34%, transparent);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--ps-accent) 12%, transparent);
+}
+
+.shelf-book[data-status="finished"] {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ps-success) 10%, var(--ps-paper)), var(--ps-paper));
+}
+
+.shelf-book-compact {
+  gap: 0.55rem;
+  padding: 0.7rem;
+}
+
+.shelf-book-compact .shelf-book-heading {
+  gap: 0.5rem;
+}
+
+.shelf-book-compact .shelf-book-heading span {
+  font-size: 0.68rem;
+  margin-bottom: 0.25rem;
+  padding: 0.18rem 0.45rem;
+}
+
+.shelf-book-compact .shelf-book-heading h4 {
+  font-size: 0.94rem;
+  line-height: 1.16;
+}
+
+.shelf-book-compact .shelf-book-heading .muted {
+  display: none;
+}
+
+.shelf-book-compact .book-spine {
+  min-height: 3rem;
+  width: 0.62rem;
+}
+
+.shelf-book-compact .shelf-book-heading strong,
+.shelf-book-compact .book-dates,
+.shelf-book-compact .book-compact-actions {
+  font-size: 0.78rem;
+}
+
+.shelf-book-compact .book-dates {
+  line-height: 1.3;
 }
 
 .shelf-book-heading {
+  align-items: start;
   display: grid;
   gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.shelf-book-heading > strong {
+  grid-column: 2;
+}
+
+.book-spine {
+  background: linear-gradient(180deg, var(--ps-accent), color-mix(in srgb, var(--ps-sky) 45%, var(--ps-accent)));
+  border-radius: 0.35rem;
+  box-shadow: inset -0.25rem 0 color-mix(in srgb, var(--ps-ink) 15%, transparent);
+  display: grid;
+  grid-row: span 2;
+  min-height: 4.2rem;
+  place-items: end center;
+  width: 0.9rem;
+}
+
+.shelf-book[data-status="paused"] .book-spine {
+  background: linear-gradient(180deg, var(--ps-warning), color-mix(in srgb, var(--ps-spark) 46%, var(--ps-warning)));
+}
+
+.shelf-book[data-status="finished"] .book-spine {
+  background: linear-gradient(180deg, var(--ps-success), color-mix(in srgb, var(--ps-sky) 30%, var(--ps-success)));
+}
+
+.book-spine span {
+  background: color-mix(in srgb, var(--ps-paper) 72%, transparent);
+  border-radius: 999px;
+  height: 1.2rem;
+  margin-bottom: 0.45rem;
+  width: 0.22rem;
 }
 
 .shelf-book-heading span {
@@ -510,6 +642,24 @@ label {
   margin: 0;
 }
 
+.book-progress {
+  background: color-mix(in srgb, var(--ps-day-no-reading) 42%, var(--ps-paper));
+  border-radius: 999px;
+  height: 0.55rem;
+  overflow: hidden;
+}
+
+.book-progress span {
+  background: linear-gradient(90deg, var(--ps-accent), var(--ps-spark));
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+}
+
+.shelf-book[data-status="finished"] .book-progress span {
+  background: linear-gradient(90deg, var(--ps-success), var(--ps-spark));
+}
+
 .book-edit-form {
   display: grid;
   gap: 0.65rem;
@@ -519,6 +669,10 @@ label {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
+}
+
+.book-actions:empty {
+  display: none;
 }
 
 .book-actions form {
@@ -543,10 +697,22 @@ label {
 }
 
 .book-edit summary,
-.book-history summary {
+.book-history summary,
+.book-compact-actions summary {
   color: var(--ps-ink);
   cursor: pointer;
   font-weight: 800;
+}
+
+.book-compact-actions {
+  color: var(--ps-muted-ink);
+  font-size: 0.9rem;
+}
+
+.book-compact-actions-body {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
 }
 
 .book-edit-form {
@@ -1087,7 +1253,7 @@ label {
 	  .history-calendar,
 	  .badge-trail,
 	  .metric-shelf,
-	  .books-grid,
+	  .books-route-grid,
 	  .daily-goal-grid,
 	  .goal-form,
 	  .goal-history-row,
@@ -1100,12 +1266,20 @@ label {
 	  .history-calendar,
 	  .badge-trail,
 	  .metric-shelf,
-	  .books-grid,
+	  .books-route-grid,
 	  .daily-goal-grid,
 	  .goal-form,
 	  .goal-history-row,
 	  .report-summary {
     grid-template-columns: 1fr;
+  }
+
+  .finished-book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shelf-book-compact .book-dates {
+    display: none;
   }
 }
 
