@@ -67,15 +67,15 @@ describe("teacher report", () => {
   });
 });
 
-function entry(date: string, pagesRead: number, dailyGoalPages: number): ReadingEntry {
+function entry(date: string, creditedPages: number, dailyGoalPages: number): ReadingEntry {
   return {
     id: `entry-${date}`,
     date,
     bookId: "book-1",
     bookTitle: "Test Book",
-    startPage: 1,
-    endPage: pagesRead,
-    pagesRead,
+    startPage: null,
+    endPage: null,
+    creditedPages: creditedPages,
     dailyGoalPages
   };
 }

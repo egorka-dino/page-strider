@@ -276,7 +276,7 @@ class SupabaseReadingEntryRepository implements ReadingEntryRepository {
           book_title: entry.bookTitle,
           start_page: entry.startPage,
           end_page: entry.endPage,
-          pages_read: entry.pagesRead,
+          pages_read: entry.creditedPages,
           daily_goal_pages: entry.dailyGoalPages,
           note: entry.note ?? null,
           updated_at: new Date().toISOString()
@@ -392,18 +392,29 @@ function mapBookInsert(book: Omit<Book, "id">) {
 
 function mapReadingEntry(row: Record<string, unknown>): ReadingEntry {
   const note = row.note ? { note: String(row.note) } : {};
+  const creditedPages = row.pages_read ?? row.pages_count ?? row.credited_pages;
 
   return {
     id: String(row.id),
     date: String(row.date),
     bookId: String(row.book_id),
     bookTitle: String(row.book_title),
-    startPage: Number(row.start_page),
-    endPage: Number(row.end_page),
-    pagesRead: Number(row.pages_read),
+    startPage: mapOptionalNumber(row.start_page),
+    endPage: mapOptionalNumber(row.end_page),
+    creditedPages: Number(creditedPages),
     dailyGoalPages: Number(row.daily_goal_pages),
     ...note
   };
+}
+
+function mapOptionalNumber(value: unknown): number | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const numberValue = Number(value);
+
+  return Number.isFinite(numberValue) ? numberValue : null;
 }
 
 function mapDailyGoal(row: Record<string, unknown>): DailyGoal {

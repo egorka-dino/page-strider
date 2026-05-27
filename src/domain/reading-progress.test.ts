@@ -113,7 +113,7 @@ describe("reading progress", () => {
 
 function entry(
   date: string,
-  pagesRead: number,
+  creditedPages: number,
   dailyGoalPages = 17
 ): ReadingEntry {
   return {
@@ -122,8 +122,8 @@ function entry(
     bookId: "book-1",
     bookTitle: "Test Book",
     startPage: 1,
-    endPage: pagesRead,
-    pagesRead,
+    endPage: creditedPages,
+    creditedPages,
     dailyGoalPages
   };
 }

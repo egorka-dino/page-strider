@@ -1,9 +1,9 @@
-import { calculatePagesRead } from "./reading-calculations";
 import type { Book, ReadingEntry, Settings } from "./types";
 
 export type TodayFlowError =
   | "missing_active_book"
   | "entry_exists"
+  | "invalid_credited_pages"
   | "end_before_start"
   | "end_after_total"
   | "invalid_book";
@@ -51,7 +51,9 @@ export function prepareTodayReadingEntry(input: {
   activeBook: Book | null;
   settings: Settings;
   today: string;
-  finishedPage: number;
+  startPage: number | null;
+  endPage: number | null;
+  creditedPages: number;
   note?: string;
   existingEntry: ReadingEntry | null;
 }): TodayReadingResult {
@@ -64,23 +66,36 @@ export function prepareTodayReadingEntry(input: {
   }
 
   const activeBook = input.activeBook;
-  const startPage = activeBook.currentPage + 1;
-  const endPage = Math.floor(input.finishedPage);
+  const startPage = normalizeOptionalPage(input.startPage);
+  const endPage = normalizeOptionalPage(input.endPage);
+  const creditedPages = Math.floor(input.creditedPages);
 
   if (!isValidBook(activeBook)) {
     return { ok: false, error: "invalid_book" };
   }
 
-  if (endPage < startPage) {
+  if (!Number.isFinite(creditedPages) || creditedPages < 1) {
+    return { ok: false, error: "invalid_credited_pages" };
+  }
+
+  if (startPage !== null && endPage !== null && endPage < startPage) {
     return { ok: false, error: "end_before_start" };
   }
 
-  if (endPage > activeBook.totalPages) {
+  if (endPage !== null && endPage > activeBook.totalPages) {
     return { ok: false, error: "end_after_total" };
   }
 
-  const bookFinished = endPage >= activeBook.totalPages;
+  const bookFinished = endPage !== null && endPage >= activeBook.totalPages;
   const note = input.note?.trim();
+  const book: Book = endPage === null
+    ? activeBook
+    : {
+        ...activeBook,
+        currentPage: endPage,
+        status: bookFinished ? "finished" : "reading",
+        finishedDate: bookFinished ? input.today : null
+      };
 
   return {
     ok: true,
@@ -90,20 +105,23 @@ export function prepareTodayReadingEntry(input: {
       bookTitle: activeBook.title,
       startPage,
       endPage,
-      pagesRead: calculatePagesRead(startPage, endPage),
+      creditedPages,
       dailyGoalPages: Math.max(1, Math.floor(input.settings.dailyGoalPages)),
       ...(note ? { note } : {})
     },
-    book: {
-      ...activeBook,
-      currentPage: endPage,
-      status: bookFinished ? "finished" : "reading",
-      finishedDate: bookFinished ? input.today : null
-    }
+    book
   };
 }
 
 function normalizePositivePage(page: number): number {
+  return Math.max(1, Math.floor(page));
+}
+
+function normalizeOptionalPage(page: number | null): number | null {
+  if (page === null || !Number.isFinite(page)) {
+    return null;
+  }
+
   return Math.max(1, Math.floor(page));
 }
 

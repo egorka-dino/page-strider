@@ -151,7 +151,9 @@ export async function recordTodayAction(formData: FormData): Promise<void> {
     activeBook,
     settings: { dailyGoalPages: dailyGoal.pagesPerDay },
     today,
-    finishedPage: getNumber(formData, "finishedPage"),
+    startPage: getOptionalNumber(formData, "startPage"),
+    endPage: getOptionalNumber(formData, "endPage"),
+    creditedPages: getNumber(formData, "creditedPages"),
     note: getString(formData, "note"),
     existingEntry
   });
@@ -229,6 +231,18 @@ function getNumber(formData: FormData, key: string): number {
   const value = Number(getString(formData, key));
 
   return Number.isFinite(value) ? Math.floor(value) : 0;
+}
+
+function getOptionalNumber(formData: FormData, key: string): number | null {
+  const rawValue = getString(formData, key);
+
+  if (!rawValue) {
+    return null;
+  }
+
+  const value = Number(rawValue);
+
+  return Number.isFinite(value) ? Math.floor(value) : null;
 }
 
 async function getBookFromForm(

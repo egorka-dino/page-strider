@@ -40,11 +40,16 @@ Do not add dependencies or configure the stack unless the current phase explicit
 
 ## Core Page Rules
 
-For a daily reading entry:
+For a daily reading entry, bookmark movement and credited reading are separate:
 
 ```text
-pagesRead = endPage - startPage + 1
+suggestedCreditedPages = endPage - startPage + 1
 ```
+
+The saved `creditedPages` value is the source of truth for daily goal completion,
+streaks, metrics, badges, reports, and history totals. `startPage` and `endPage`
+are optional for historical imports, and `endPage` is used only for the current
+bookmark and active book progress.
 
 For book progress:
 

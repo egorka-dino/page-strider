@@ -10,12 +10,12 @@ export function buildTeacherReportSummary(input: {
 }): TeacherReportSummary {
   const periodDaysCount = countCalendarDays(input.from, input.to);
   const totalPagesRead = input.entries.reduce(
-    (total, entry) => total + Math.max(0, Math.floor(entry.pagesRead)),
+    (total, entry) => total + Math.max(0, Math.floor(entry.creditedPages)),
     0
   );
-  const readingDaysCount = input.entries.filter((entry) => entry.pagesRead > 0).length;
+  const readingDaysCount = input.entries.filter((entry) => entry.creditedPages > 0).length;
   const goalCompletedDaysCount = input.entries.filter(
-    (entry) => entry.pagesRead >= normalizeGoal(entry.dailyGoalPages || input.dailyGoalPages)
+    (entry) => entry.creditedPages >= normalizeGoal(entry.dailyGoalPages || input.dailyGoalPages)
   ).length;
 
   return {
@@ -28,7 +28,7 @@ export function buildTeacherReportSummary(input: {
       readingDaysCount > 0 ? totalPagesRead / readingDaysCount : null,
     averagePagesPerCalendarDay:
       periodDaysCount > 0 ? totalPagesRead / periodDaysCount : null,
-    bestDayPages: Math.max(0, ...input.entries.map((entry) => entry.pagesRead))
+    bestDayPages: Math.max(0, ...input.entries.map((entry) => entry.creditedPages))
   };
 }
 

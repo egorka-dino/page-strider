@@ -124,9 +124,9 @@ A daily reading entry should include:
 - `date`
 - `bookId`
 - `bookTitle` or a stable book snapshot for reports
-- `startPage`
-- `endPage`
-- `pagesRead`
+- optional `startPage`
+- optional `endPage`
+- `creditedPages`
 - `dailyGoalPages`
 - optional `note`
 
@@ -169,17 +169,23 @@ A book has:
 
 `currentPage` means the last page that has already been read.
 
-For a daily reading entry:
+For a daily reading entry, bookmark movement and credited reading are separate:
 
 ```text
-pagesRead = endPage - startPage + 1
+suggestedCreditedPages = endPage - startPage + 1
 ```
 
-Example: if the reader started today on page 42 and finished on page 65, then:
+Example: if the reader started today on page 42 and finished on page 65, then the app may suggest:
 
 ```text
-pagesRead = 65 - 42 + 1 = 24
+suggestedCreditedPages = 65 - 42 + 1 = 24
 ```
+
+The saved `creditedPages` value is the source of truth for daily goal completion,
+streaks, metrics, badges, reports, and history totals. It can differ from bookmark
+movement because some pages may be pictures, maps, exercises, rereading, or other
+non-standard reading effort. `startPage` and `endPage` may be absent for imported
+history. `endPage` is used only to update the current bookmark and book progress.
 
 For book progress:
 
@@ -233,7 +239,7 @@ The app should show:
 A streak day is a day where:
 
 ```text
-pagesRead >= dailyGoalPages
+creditedPages >= dailyGoalPages
 ```
 
 Missed days should not feel too punishing in the UI. The product tone should encourage continuing rather than shame missed days.

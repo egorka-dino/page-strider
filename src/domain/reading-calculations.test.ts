@@ -111,8 +111,8 @@ describe("reading calculations", () => {
       forecastFinishByAveragePace({
         pagesLeft: 30,
         entries: [
-          { date: "2026-05-20", pagesRead: 10 },
-          { date: "2026-05-21", pagesRead: 20 }
+          { date: "2026-05-20", creditedPages: 10 },
+          { date: "2026-05-21", creditedPages: 20 }
         ],
         fromDate: "2026-05-22"
       })

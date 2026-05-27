@@ -11,7 +11,7 @@ const entries: ReadingEntry[] = [
     bookTitle: "The Wild Robot",
     startPage: 31,
     endPage: 54,
-    pagesRead: 24,
+    creditedPages: 24,
     dailyGoalPages: 20
   },
   {
@@ -21,7 +21,7 @@ const entries: ReadingEntry[] = [
     bookTitle: "The Wild Robot",
     startPage: 55,
     endPage: 72,
-    pagesRead: 18,
+    creditedPages: 18,
     dailyGoalPages: 20,
     note: "A calm evening chapter."
   },
@@ -32,7 +32,7 @@ const entries: ReadingEntry[] = [
     bookTitle: "The Wild Robot",
     startPage: 1,
     endPage: 120,
-    pagesRead: 120,
+    creditedPages: 120,
     dailyGoalPages: 20
   }
 ];
@@ -47,32 +47,32 @@ describe("reading history", () => {
         dailyGoalPages: 20
       }).map((day) => ({
         date: day.date,
-        pagesRead: day.pagesRead,
+        creditedPages: day.creditedPages,
         level: day.level,
         hasEntry: Boolean(day.entry)
       }))
     ).toEqual([
       {
         date: "2026-05-22",
-        pagesRead: 0,
+        creditedPages: 0,
         level: "no_reading",
         hasEntry: false
       },
       {
         date: "2026-05-21",
-        pagesRead: 18,
+        creditedPages: 18,
         level: "partial",
         hasEntry: true
       },
       {
         date: "2026-05-20",
-        pagesRead: 24,
+        creditedPages: 24,
         level: "good",
         hasEntry: true
       },
       {
         date: "2026-05-19",
-        pagesRead: 120,
+        creditedPages: 120,
         level: "legendary",
         hasEntry: true
       }
@@ -85,7 +85,7 @@ describe("reading history", () => {
         {
           ...entries[0],
           date: "2026-05-22",
-          pagesRead: 24,
+          creditedPages: 24,
           dailyGoalPages: 30
         }
       ],
@@ -104,13 +104,13 @@ describe("reading history", () => {
           {
             ...entries[0],
             date: "2026-07-10",
-            pagesRead: 21,
+            creditedPages: 21,
             dailyGoalPages: 22
           },
           {
             ...entries[1],
             date: "2026-06-20",
-            pagesRead: 18,
+            creditedPages: 18,
             dailyGoalPages: 17
           }
         ],

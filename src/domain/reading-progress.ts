@@ -25,7 +25,7 @@ export function calculateStreaks(input: StreakInput): ReadingStreaks {
   const normalizedGoal = normalizeGoal(input.dailyGoalPages);
   const anchorEntry = entriesByDate.get(input.anchorDate);
   const currentStartDate =
-    anchorEntry && anchorEntry.pagesRead < goalForEntry(anchorEntry, normalizedGoal)
+    anchorEntry && anchorEntry.creditedPages < goalForEntry(anchorEntry, normalizedGoal)
       ? input.anchorDate
       : anchorEntry
         ? input.anchorDate
@@ -35,7 +35,7 @@ export function calculateStreaks(input: StreakInput): ReadingStreaks {
   for (let date = currentStartDate; ; date = addDays(date, -1)) {
     const entry = entriesByDate.get(date);
 
-    if (!entry || entry.pagesRead < goalForEntry(entry, normalizedGoal)) {
+    if (!entry || entry.creditedPages < goalForEntry(entry, normalizedGoal)) {
       break;
     }
 
@@ -51,9 +51,9 @@ export function calculateStreaks(input: StreakInput): ReadingStreaks {
 export function calculateReadingMetrics(input: ProgressInput): ReadingMetrics {
   const entries = sortEntriesAscending(input.entries);
   const streaks = calculateStreaks(input);
-  const readingEntries = entries.filter((entry) => entry.pagesRead > 0);
+  const readingEntries = entries.filter((entry) => entry.creditedPages > 0);
   const totalPagesRead = entries.reduce(
-    (total, entry) => total + Math.max(0, Math.floor(entry.pagesRead)),
+    (total, entry) => total + Math.max(0, Math.floor(entry.creditedPages)),
     0
   );
   const firstDate = entries[0]?.date ?? null;
@@ -72,18 +72,18 @@ export function calculateReadingMetrics(input: ProgressInput): ReadingMetrics {
     bestStreakDays: streaks.bestStreakDays,
     readingDaysCount: readingEntries.length,
     goalCompletedDaysCount: entries.filter(
-      (entry) => entry.pagesRead >= goalForEntry(entry, input.dailyGoalPages)
+      (entry) => entry.creditedPages >= goalForEntry(entry, input.dailyGoalPages)
     ).length,
     averagePagesPerReadingDay:
       readingEntries.length > 0 ? totalPagesRead / readingEntries.length : null,
     averagePagesPerCalendarDay:
       calendarDayCount > 0 ? totalPagesRead / calendarDayCount : null,
-    bestDayPages: Math.max(0, ...entries.map((entry) => entry.pagesRead)),
+    bestDayPages: Math.max(0, ...entries.map((entry) => entry.creditedPages)),
     pagesReadThisWeek: weekEntries.reduce(
-      (total, entry) => total + Math.max(0, Math.floor(entry.pagesRead)),
+      (total, entry) => total + Math.max(0, Math.floor(entry.creditedPages)),
       0
     ),
-    readingDaysThisWeek: weekEntries.filter((entry) => entry.pagesRead > 0).length
+    readingDaysThisWeek: weekEntries.filter((entry) => entry.creditedPages > 0).length
   };
 }
 
@@ -101,14 +101,14 @@ export function buildComputedBadges(input: ProgressInput): Badge[] {
       key: "first_stride",
       label: "Первый шаг",
       description: "Сохранен первый читательский квест.",
-      earnedDate: entries.find((entry) => entry.pagesRead > 0)?.date ?? null
+      earnedDate: entries.find((entry) => entry.creditedPages > 0)?.date ?? null
     },
     {
       key: "goal_keeper",
       label: "Хранитель цели",
       description: "Цель на день взята хотя бы один раз.",
       earnedDate:
-        entries.find((entry) => entry.pagesRead >= goalForEntry(entry, normalizedGoal))
+        entries.find((entry) => entry.creditedPages >= goalForEntry(entry, normalizedGoal))
           ?.date ?? null
     },
     {
@@ -117,7 +117,7 @@ export function buildComputedBadges(input: ProgressInput): Badge[] {
       description: "Один день прошел в два раза дальше цели.",
       earnedDate:
         entries.find(
-          (entry) => entry.pagesRead >= goalForEntry(entry, normalizedGoal) * 2
+          (entry) => entry.creditedPages >= goalForEntry(entry, normalizedGoal) * 2
         )?.date ?? null
     },
     {
@@ -130,7 +130,7 @@ export function buildComputedBadges(input: ProgressInput): Badge[] {
       key: "century_strider",
       label: "Сотня страниц",
       description: "За один день прочитано 100 страниц или больше.",
-      earnedDate: entries.find((entry) => entry.pagesRead >= 100)?.date ?? null
+      earnedDate: entries.find((entry) => entry.creditedPages >= 100)?.date ?? null
     },
     {
       key: "book_finisher",
@@ -171,7 +171,7 @@ function calculateBestStreak(entries: ReadingEntry[], dailyGoalPages: number): n
   let previousGoalDate: string | null = null;
 
   for (const entry of sortEntriesAscending(entries)) {
-    if (entry.pagesRead < goalForEntry(entry, dailyGoalPages)) {
+    if (entry.creditedPages < goalForEntry(entry, dailyGoalPages)) {
       previousGoalDate = null;
       currentStreak = 0;
       continue;
@@ -197,7 +197,7 @@ function findStreakEarnedDate(
   let previousGoalDate: string | null = null;
 
   for (const entry of sortEntriesAscending(entries)) {
-    if (entry.pagesRead < goalForEntry(entry, dailyGoalPages)) {
+    if (entry.creditedPages < goalForEntry(entry, dailyGoalPages)) {
       previousGoalDate = null;
       currentStreak = 0;
       continue;
@@ -219,7 +219,7 @@ function findStreakEarnedDate(
 
 function findComebackDate(entries: ReadingEntry[]): string | null {
   const readingEntries = sortEntriesAscending(entries).filter(
-    (entry) => entry.pagesRead > 0
+    (entry) => entry.creditedPages > 0
   );
 
   for (let index = 1; index < readingEntries.length; index += 1) {

@@ -116,7 +116,7 @@ function entry(date: string): ReadingEntry {
     bookTitle: "Book active-book",
     startPage: 20,
     endPage: 40,
-    pagesRead: 21,
+    creditedPages: 21,
     dailyGoalPages: 17
   };
 }

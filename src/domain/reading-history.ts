@@ -3,7 +3,7 @@ import type { DayLevel, ReadingEntry } from "./types";
 
 export interface ReadingHistoryDay {
   date: string;
-  pagesRead: number;
+  creditedPages: number;
   level: DayLevel;
   entry: ReadingEntry | null;
 }
@@ -22,13 +22,13 @@ export function buildReadingHistoryDays(input: {
   return Array.from({ length: dayCount }, (_, index) => {
     const date = addDays(input.anchorDate, -index);
     const entry = entriesByDate.get(date) ?? null;
-    const pagesRead = entry?.pagesRead ?? 0;
+    const creditedPages = entry?.creditedPages ?? 0;
     const goalPages = entry?.dailyGoalPages ?? input.dailyGoalPages;
 
     return {
       date,
-      pagesRead,
-      level: classifyDayLevel(pagesRead, goalPages),
+      creditedPages,
+      level: classifyDayLevel(creditedPages, goalPages),
       entry
     };
   });

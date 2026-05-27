@@ -39,9 +39,9 @@ export interface ReadingEntry {
   date: string;
   bookId: string;
   bookTitle: string;
-  startPage: number;
-  endPage: number;
-  pagesRead: number;
+  startPage: number | null;
+  endPage: number | null;
+  creditedPages: number;
   dailyGoalPages: number;
   note?: string;
 }
@@ -124,5 +124,5 @@ export interface FinishForecast {
 
 export interface ReadingPaceEntry {
   date: string;
-  pagesRead: number;
+  creditedPages: number;
 }

@@ -78,15 +78,15 @@ function goal(id: string, pagesPerDay: number, effectiveFrom: string): DailyGoal
   };
 }
 
-function entry(date: string, pagesRead: number) {
+function entry(date: string, creditedPages: number) {
   return {
     id: `entry-${date}`,
     date,
     bookId: "book-1",
     bookTitle: "Test Book",
     startPage: 1,
-    endPage: pagesRead,
-    pagesRead,
+    endPage: creditedPages,
+    creditedPages,
     dailyGoalPages: 17
   };
 }

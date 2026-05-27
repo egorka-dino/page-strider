@@ -42,10 +42,10 @@ export function calculatePagesLeft(book: BookPageState): number {
 }
 
 export function classifyDayLevel(
-  pagesRead: number,
+  creditedPages: number,
   dailyGoalPages: number
 ): DayLevel {
-  const normalizedPagesRead = Math.max(0, Math.floor(pagesRead));
+  const normalizedPagesRead = Math.max(0, Math.floor(creditedPages));
   const normalizedGoal = Math.max(1, Math.floor(dailyGoalPages));
 
   if (normalizedPagesRead >= 100) {
@@ -104,7 +104,7 @@ export function forecastFinishByAveragePace(input: {
   }
 
   const totalPagesRead = input.entries.reduce(
-    (total, entry) => total + Math.max(0, entry.pagesRead),
+    (total, entry) => total + Math.max(0, entry.creditedPages),
     0
   );
   const averagePagesPerDay = totalPagesRead / input.entries.length;

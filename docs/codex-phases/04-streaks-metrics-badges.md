@@ -20,7 +20,7 @@ Add motivating progress feedback through streaks, metrics, and computed badges w
 - Add streak utilities:
   - current streak
   - best streak
-  - streak days where `pagesRead >= dailyGoalPages`
+  - streak days where `creditedPages >= dailyGoalPages`
 - Add metrics utilities:
   - total pages read
   - books finished

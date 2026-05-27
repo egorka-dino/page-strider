@@ -2,6 +2,13 @@ export const UI_COPY = {
   metadata: {
     description: "Небольшой читательский дневник для одного читателя."
   },
+  navigation: {
+    ariaLabel: "Основные разделы читательского маршрута",
+    today: "Сегодня",
+    books: "Полка",
+    journey: "Путь",
+    report: "Отчет"
+  },
   hero: {
     eyebrow: "Книжный квест дня",
     logoLabel: "Знак PageStrider",
@@ -26,6 +33,7 @@ export const UI_COPY = {
     invalidBookPages: "Проверьте страницы книги: маршрут должен помещаться внутри книги.",
     missingActiveBook: "Сначала выберите активную книгу для квеста.",
     entryExists: "Квест за сегодня уже засчитан.",
+    invalidCreditedPages: "Укажите, сколько страниц засчитать: нужно число больше нуля.",
     endBeforeStart: "Финиш шага должен быть после последней уже прочитанной страницы.",
     endAfterTotal: "Финиш шага не может быть дальше конца книги.",
     invalidBook: "Перед стартом нужны корректные данные книги.",
@@ -43,13 +51,18 @@ export const UI_COPY = {
     leftStat: "До финиша",
     doneStat: "Прогресс",
     savedEyebrow: "Квест засчитан",
-    pagesLogged: (pagesRead: number) => `+${pagesRead} стр. к маршруту`,
-    pageRangeRecorded: (startPage: number, endPage: number) =>
-      `Сегодня пройден отрезок ${startPage}-${endPage}.`,
+    pagesLogged: (creditedPages: number) => `+${creditedPages} стр. к маршруту`,
+    bookmarkRecorded: (startPage: number, endPage: number) =>
+      `Закладка: ${startPage} → ${endPage}.`,
+    creditedOnlyRecorded: "Закладка осталась без изменения.",
     nextStepEyebrow: "Шаг дня",
     startOnPage: (nextPage: number) => `Стартуйте со страницы ${nextPage}`,
-    finishedPageLabel: "До какой страницы дошли?",
-    noteLabel: "Заметка к шагу",
+    startPageLabel: "Страница начала",
+    endPageLabel: "Где остановились",
+    creditedPagesLabel: "Засчитать страниц",
+    creditedPagesHelp:
+      "Можно изменить, если были страницы с картинками или чтение не совпадает с движением закладки.",
+    noteLabel: "Заметка",
     notePlaceholder: "Что было самым интересным?",
     formHint: (dailyGoalPages: number) =>
       `Цель на день: ${dailyGoalPages} стр. Если дошли дальше - маршрут получит мощный бонус.`,
@@ -82,8 +95,9 @@ export const UI_COPY = {
     detailsHeading: "Детали дней",
     bookLabel: "Книга",
     pagesLabel: "Страницы",
-    pagesRead: (pagesRead: number) => `${pagesRead} стр.`,
-    pageRange: (startPage: number, endPage: number) => `${startPage}-${endPage}`,
+    creditedPages: (creditedPages: number) => `${creditedPages} стр.`,
+    pageRange: (startPage: number, endPage: number) => `${startPage} → ${endPage}`,
+    emptyPageRange: "-",
     goalStatus: {
       no_reading: "пока без чтения",
       partial: "часть цели",
@@ -163,8 +177,14 @@ export const UI_COPY = {
     finishAction: "Завершить книгу",
     historyHeading: "История книги",
     noBookHistory: "У этой книги пока нет сохраненных шагов.",
-    historyEntry: (date: string, startPage: number, endPage: number, pagesRead: number) =>
-      `${formatDate(date)}: ${startPage}-${endPage}, ${pagesRead} стр.`,
+    historyEntryWithBookmark: (
+      date: string,
+      startPage: number,
+      endPage: number,
+      creditedPages: number
+    ) => `${formatDate(date)}: Закладка ${startPage} → ${endPage}, засчитано ${creditedPages} стр.`,
+    historyEntryCreditedOnly: (date: string, creditedPages: number) =>
+      `${formatDate(date)}: засчитано ${creditedPages} стр.`,
     switchLocked:
       "Сегодня уже есть запись чтения, поэтому сменить активную книгу можно будет завтра."
   },
@@ -200,13 +220,14 @@ export const UI_COPY = {
     table: {
       date: "Дата",
       book: "Книга",
-      pages: "Страницы",
-      pagesRead: "Прочитано",
+      pages: "Закладка",
+      creditedPages: "Прочитано",
       dailyGoal: "Цель на день",
       goalStatus: "Цель",
       note: "Заметка"
     },
-    pageRange: (startPage: number, endPage: number) => `${startPage}-${endPage}`,
+    pageRange: (startPage: number, endPage: number) => `${startPage} → ${endPage}`,
+    emptyPageRange: "-",
     goalDone: "выполнена",
     goalPartial: "частично",
     emptyNote: "-",
