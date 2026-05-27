@@ -158,6 +158,7 @@ export const UI_COPY = {
     activeHeading: "Активная книга",
     pausedHeading: "На паузе",
     finishedHeading: "Завершенные книги",
+    detailEyebrow: "Страница книги",
     activeTrailLabel: "главный маршрут",
     pausedTrailLabel: "ждут продолжения",
     finishedTrailLabel: "финалы полки",
@@ -180,7 +181,8 @@ export const UI_COPY = {
     pauseAction: "Поставить на паузу",
     activateAction: "Сделать активной",
     finishAction: "Завершить книгу",
-    openArchiveCard: "Открыть карточку",
+    openArchiveCard: "Открыть книгу",
+    backToShelf: "Вернуться на полку",
     historyHeading: "История книги",
     noBookHistory: "У этой книги пока нет сохраненных шагов.",
     historyEntryWithBookmark: (

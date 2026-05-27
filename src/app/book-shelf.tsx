@@ -1,4 +1,5 @@
 import { calculateBookProgress, type Book, type ReadingEntry } from "@/domain";
+import Link from "next/link";
 
 import {
   activateBookAction,
@@ -140,7 +141,8 @@ function BookCard({
   canFinish,
   canPause,
   entries,
-  compact = false
+  compact = false,
+  historyOpen = false
 }: {
   book: Book;
   canActivate: boolean;
@@ -148,6 +150,7 @@ function BookCard({
   canPause: boolean;
   entries: ReadingEntry[];
   compact?: boolean;
+  historyOpen?: boolean;
 }) {
   const bookEntries = entries.filter((entry) => entry.bookId === book.id);
   const progress = calculateBookProgress(book);
@@ -206,7 +209,7 @@ function BookCard({
         ) : null}
       </div>
 
-      <details className="book-history">
+      <details className="book-history" open={historyOpen || undefined}>
         <summary>{UI_COPY.books.historyHeading}</summary>
         {bookEntries.length > 0 ? (
           <ul>
@@ -229,9 +232,6 @@ function BookCard({
       data-status={book.status}
     >
       <div className="shelf-book-heading">
-        <div className="book-spine" aria-hidden="true">
-          <span />
-        </div>
         <div>
           <span>{UI_COPY.books.status[book.status]}</span>
           <h4>{book.title}</h4>
@@ -250,14 +250,59 @@ function BookCard({
       </p>
 
       {compact ? (
-        <details className="book-compact-actions">
-          <summary>{UI_COPY.books.openArchiveCard}</summary>
-          <div className="book-compact-actions-body">{details}</div>
-        </details>
+        <Link className="book-card-link" href={`/books/${book.id}`}>
+          {UI_COPY.books.openArchiveCard}
+        </Link>
       ) : (
         details
       )}
     </article>
+  );
+}
+
+export function BookDetailPanel({
+  activeBook,
+  book,
+  entries,
+  todayEntry
+}: {
+  activeBook: Book | null;
+  book: Book;
+  entries: ReadingEntry[];
+  todayEntry: ReadingEntry | null;
+}) {
+  const canSwitchToday = !todayEntry;
+  const canPause = book.status === "reading";
+  const canFinish = book.status !== "finished";
+  const canActivate =
+    book.status === "paused" &&
+    canSwitchToday &&
+    (!activeBook || activeBook.id !== book.id);
+
+  return (
+    <section className="book-detail-panel">
+      <div className="book-detail-heading">
+        <div>
+          <p className="eyebrow">{UI_COPY.books.detailEyebrow}</p>
+          <h2>{book.title}</h2>
+        </div>
+        <Link className="text-link" href="/books">
+          {UI_COPY.books.backToShelf}
+        </Link>
+      </div>
+
+      <BookCard
+        book={book}
+        canActivate={canActivate}
+        canFinish={canFinish}
+        canPause={canPause}
+        entries={entries}
+        historyOpen
+      />
+      {!canSwitchToday && book.status === "paused" ? (
+        <p className="form-hint">{UI_COPY.books.switchLocked}</p>
+      ) : null}
+    </section>
   );
 }
 
