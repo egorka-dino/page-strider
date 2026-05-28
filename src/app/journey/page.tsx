@@ -25,6 +25,7 @@ const errorMessages: Record<string, string> = {
 };
 
 const messageText: Record<string, string> = {
+  entry_added: UI_COPY.messages.entryAdded,
   entry_updated: UI_COPY.messages.entryUpdated,
   entry_deleted: UI_COPY.messages.entryDeleted,
   goal_saved: UI_COPY.messages.goalSaved
@@ -83,7 +84,7 @@ export default async function JourneyPage({
       {message ? <p className="notice success">{messageText[message] ?? message}</p> : null}
       <ProgressPanel metrics={metrics} badges={badges} />
       <DailyGoalPanel currentGoal={currentGoal} goals={dailyGoals} today={today} />
-      <HistoryPanel days={historyDays} />
+      <HistoryPanel books={books} days={historyDays} />
     </main>
   );
 }

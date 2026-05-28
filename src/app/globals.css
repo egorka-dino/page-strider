@@ -44,6 +44,7 @@ body {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -63,6 +64,7 @@ button:hover {
 }
 
 input,
+select,
 textarea {
   width: 100%;
   border: 1px solid color-mix(in srgb, var(--ps-ink) 18%, transparent);

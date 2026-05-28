@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { Book, ReadingEntry, Settings } from "./types";
 import {
   createActiveBookDraft,
+  prepareHistoricalReadingEntry,
   prepareReadingEntryCorrection,
   recalculateBookAfterEntryChange,
   prepareTodayReadingEntry
@@ -213,6 +214,63 @@ describe("today flow", () => {
       ok: false,
       error: "entry_exists"
     });
+  });
+
+  it("prepares a historical entry for an empty past day", () => {
+    const result = prepareHistoricalReadingEntry({
+      book: activeBook,
+      date: "2026-05-21",
+      dailyGoalPages: 20,
+      existingEntry: null,
+      startPage: 10,
+      endPage: 24,
+      creditedPages: 15,
+      note: "  Yesterday quest. "
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      entry: {
+        date: "2026-05-21",
+        bookId: "book-1",
+        bookTitle: "The Hobbit",
+        startPage: 10,
+        endPage: 24,
+        creditedPages: 15,
+        dailyGoalPages: 20,
+        note: "Yesterday quest."
+      }
+    });
+  });
+
+  it("rejects historical entries for used dates and invalid dates", () => {
+    const existingEntry = createEntry({ date: "2026-05-21" });
+
+    expect(
+      prepareHistoricalReadingEntry({
+        book: activeBook,
+        date: "2026-05-21",
+        dailyGoalPages: 20,
+        existingEntry,
+        startPage: 10,
+        endPage: 24,
+        creditedPages: 15,
+        note: ""
+      })
+    ).toEqual({ ok: false, error: "entry_exists" });
+
+    expect(
+      prepareHistoricalReadingEntry({
+        book: activeBook,
+        date: "not-a-date",
+        dailyGoalPages: 20,
+        existingEntry: null,
+        startPage: 10,
+        endPage: 24,
+        creditedPages: 15,
+        note: ""
+      })
+    ).toEqual({ ok: false, error: "invalid_entry_date" });
   });
 
   it("prepares a corrected entry with the daily goal for the target date", () => {

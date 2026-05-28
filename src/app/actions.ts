@@ -8,6 +8,7 @@ import {
   finishBook,
   normalizeDailyGoalInput,
   pauseBook,
+  prepareHistoricalReadingEntry,
   prepareReadingEntryCorrection,
   prepareBookActivation,
   prepareTodayReadingEntry,
@@ -255,6 +256,36 @@ export async function updateReadingEntryAction(formData: FormData): Promise<void
   redirect("/journey?message=entry_updated");
 }
 
+export async function createHistoricalReadingEntryAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const book = await getBookFromFormForJourney(data, formData);
+  const date = getString(formData, "date");
+  const [existingEntry, dailyGoal] = await Promise.all([
+    date ? data.entries.getEntryByDate(date) : Promise.resolve(null),
+    data.goals.getDailyGoalForDate(date || getTodayIsoDate())
+  ]);
+  const result = prepareHistoricalReadingEntry({
+    book,
+    date,
+    dailyGoalPages: dailyGoal.pagesPerDay,
+    existingEntry,
+    startPage: getOptionalNumber(formData, "startPage"),
+    endPage: getOptionalNumber(formData, "endPage"),
+    creditedPages: getNumber(formData, "creditedPages"),
+    note: getString(formData, "note")
+  });
+
+  if (!result.ok) {
+    redirectToJourneyWithError(result.error);
+  }
+
+  const entry = await data.entries.upsertEntry(result.entry);
+  await updateBookAfterHistoryChange(data, entry.bookId);
+
+  revalidateAppRoutes(entry.bookId);
+  redirect("/journey?message=entry_added");
+}
+
 export async function deleteReadingEntryAction(formData: FormData): Promise<void> {
   const data = createSupabaseDataAccess();
   const entry = await getEntryFromForm(data, formData);
@@ -299,6 +330,20 @@ async function getBookFromForm(
 
   if (!book) {
     redirectWithError("invalid_book");
+  }
+
+  return book;
+}
+
+async function getBookFromFormForJourney(
+  data: ReturnType<typeof createSupabaseDataAccess>,
+  formData: FormData
+) {
+  const bookId = getString(formData, "bookId");
+  const book = bookId ? await data.books.getBookById(bookId) : null;
+
+  if (!book) {
+    redirectToJourneyWithError("invalid_book");
   }
 
   return book;

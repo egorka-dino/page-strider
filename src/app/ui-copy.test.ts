@@ -11,6 +11,7 @@ describe("UI copy", () => {
     expect(UI_COPY.today.endPageLabel).toBe("Где остановились");
     expect(UI_COPY.messages.entrySaved).toBe("Квест дня сохранен. Отличный шаг!");
     expect(UI_COPY.history.correctionHeading).toBe("Исправить шаг");
+    expect(UI_COPY.history.addHeading).toBe("Добавить шаг");
   });
 
   it("keeps validation messages in Russian", () => {

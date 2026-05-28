@@ -31,6 +31,16 @@ export type ReadingEntryCorrectionResult =
       error: TodayFlowError;
     };
 
+export type HistoricalReadingEntryResult =
+  | {
+      ok: true;
+      entry: Omit<ReadingEntry, "id">;
+    }
+  | {
+      ok: false;
+      error: TodayFlowError;
+    };
+
 export interface ActiveBookInput {
   title: string;
   author: string;
@@ -122,6 +132,61 @@ export function prepareTodayReadingEntry(input: {
       ...(note ? { note } : {})
     },
     book
+  };
+}
+
+export function prepareHistoricalReadingEntry(input: {
+  book: Book | null;
+  date: string;
+  dailyGoalPages: number;
+  existingEntry: ReadingEntry | null;
+  startPage: number | null;
+  endPage: number | null;
+  creditedPages: number;
+  note?: string;
+}): HistoricalReadingEntryResult {
+  if (!input.book || !isValidBook(input.book)) {
+    return { ok: false, error: "invalid_book" };
+  }
+
+  if (!isValidIsoDate(input.date)) {
+    return { ok: false, error: "invalid_entry_date" };
+  }
+
+  if (input.existingEntry) {
+    return { ok: false, error: "entry_exists" };
+  }
+
+  const startPage = normalizeOptionalPage(input.startPage);
+  const endPage = normalizeOptionalPage(input.endPage);
+  const creditedPages = Math.floor(input.creditedPages);
+
+  if (!Number.isFinite(creditedPages) || creditedPages < 1) {
+    return { ok: false, error: "invalid_credited_pages" };
+  }
+
+  if (startPage !== null && endPage !== null && endPage < startPage) {
+    return { ok: false, error: "end_before_start" };
+  }
+
+  if (endPage !== null && endPage > input.book.totalPages) {
+    return { ok: false, error: "end_after_total" };
+  }
+
+  const note = input.note?.trim();
+  const entry: Omit<ReadingEntry, "id"> = {
+    date: input.date,
+    bookId: input.book.id,
+    bookTitle: input.book.title,
+    startPage,
+    endPage,
+    creditedPages,
+    dailyGoalPages: Math.max(1, Math.floor(input.dailyGoalPages))
+  };
+
+  return {
+    ok: true,
+    entry: note ? { ...entry, note } : entry
   };
 }
 

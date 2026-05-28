@@ -1,10 +1,14 @@
-import type { Badge, ReadingHistoryDay, ReadingMetrics, ReadingEntry } from "@/domain";
+import type { Badge, Book, ReadingHistoryDay, ReadingMetrics, ReadingEntry } from "@/domain";
 
-import { deleteReadingEntryAction, updateReadingEntryAction } from "./actions";
+import {
+  createHistoricalReadingEntryAction,
+  deleteReadingEntryAction,
+  updateReadingEntryAction
+} from "./actions";
 import { parseIsoDate } from "./page-utils";
 import { UI_COPY } from "./ui-copy";
 
-export function HistoryPanel({ days }: { days: ReadingHistoryDay[] }) {
+export function HistoryPanel({ books, days }: { books: Book[]; days: ReadingHistoryDay[] }) {
   const hasEntries = days.some((day) => day.entry);
 
   return (
@@ -31,19 +35,19 @@ export function HistoryPanel({ days }: { days: ReadingHistoryDay[] }) {
         ))}
       </div>
 
-      {hasEntries ? (
-        <div className="history-details">
-          <h3>{UI_COPY.history.detailsHeading}</h3>
-          {days.map((day) => (
-            <DayDetail day={day} key={day.date} />
-          ))}
-        </div>
-      ) : (
+      {!hasEntries ? (
         <div className="history-empty">
           <h3>{UI_COPY.history.emptyHeading}</h3>
           <p>{UI_COPY.history.emptyCopy}</p>
         </div>
-      )}
+      ) : null}
+
+      <div className="history-details">
+        <h3>{UI_COPY.history.detailsHeading}</h3>
+        {days.map((day) => (
+          <DayDetail books={books} day={day} key={day.date} />
+        ))}
+      </div>
     </section>
   );
 }
@@ -169,7 +173,7 @@ export function ProgressPanel({
   );
 }
 
-function DayDetail({ day }: { day: ReadingHistoryDay }) {
+function DayDetail({ books, day }: { books: Book[]; day: ReadingHistoryDay }) {
   const status = UI_COPY.history.goalStatus[day.level];
 
   return (
@@ -202,9 +206,54 @@ function DayDetail({ day }: { day: ReadingHistoryDay }) {
           <HistoryCorrection entry={day.entry} />
         </>
       ) : (
-        <p>{UI_COPY.history.emptyDayDetail}</p>
+        <>
+          <p>{UI_COPY.history.emptyDayDetail}</p>
+          <HistoryEntryCreate books={books} date={day.date} />
+        </>
       )}
     </article>
+  );
+}
+
+function HistoryEntryCreate({ books, date }: { books: Book[]; date: string }) {
+  if (books.length === 0) {
+    return <p>{UI_COPY.history.addEmptyBooks}</p>;
+  }
+
+  return (
+    <details className="history-correction">
+      <summary>{UI_COPY.history.addHeading}</summary>
+      <form action={createHistoricalReadingEntryAction} className="history-correction-form">
+        <input name="date" type="hidden" value={date} />
+        <label className="wide-field">
+          {UI_COPY.history.addBookLabel}
+          <select name="bookId" required defaultValue={books[0]?.id}>
+            {books.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.title}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {UI_COPY.history.correctionStartPageLabel}
+          <input name="startPage" type="number" min="1" />
+        </label>
+        <label>
+          {UI_COPY.history.correctionEndPageLabel}
+          <input name="endPage" type="number" min="1" />
+        </label>
+        <label>
+          {UI_COPY.history.correctionCreditedPagesLabel}
+          <input name="creditedPages" type="number" min="1" required />
+        </label>
+        <label className="wide-field">
+          {UI_COPY.history.correctionNoteLabel}
+          <textarea name="note" rows={2} />
+        </label>
+        <button type="submit">{UI_COPY.history.addSaveButton}</button>
+      </form>
+    </details>
   );
 }
 

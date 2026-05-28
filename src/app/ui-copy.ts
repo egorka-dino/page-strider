@@ -22,6 +22,7 @@ export const UI_COPY = {
   messages: {
     bookCreated: "Книга добавлена. Первый квест готов!",
     entrySaved: "Квест дня сохранен. Отличный шаг!",
+    entryAdded: "Прошлый шаг добавлен в маршрут.",
     entryUpdated: "Шаг в истории исправлен. Маршрут снова ровный!",
     entryDeleted: "Ошибочная отметка удалена из маршрута.",
     bookUpdated: "Детали книги обновлены.",
@@ -120,7 +121,11 @@ export const UI_COPY = {
     correctionNoteLabel: "Заметка",
     correctionSaveButton: "Сохранить исправление",
     correctionDeleteButton: "Удалить отметку",
-    correctionDeleteHint: "Если шаг попал в историю случайно, его можно убрать."
+    correctionDeleteHint: "Если шаг попал в историю случайно, его можно убрать.",
+    addHeading: "Добавить шаг",
+    addBookLabel: "Книга",
+    addSaveButton: "Добавить в маршрут",
+    addEmptyBooks: "Сначала нужна книга на полке, потом можно добавить шаг за этот день."
   },
   progress: {
     eyebrow: "Сила маршрута",
