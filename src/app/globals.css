@@ -510,7 +510,7 @@ label {
 .finished-book-grid {
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(8.4rem, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .book-column {
@@ -580,11 +580,11 @@ label {
 }
 
 .shelf-book-compact {
-  align-content: start;
-  gap: 0.55rem;
-  grid-template-rows: auto auto auto 1fr auto;
-  min-height: 11.25rem;
-  padding: 0.7rem;
+  align-items: center;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1.3fr) minmax(10rem, 0.75fr) minmax(8rem, 0.65fr) auto;
+  height: 6.9rem;
+  padding: 0.75rem;
 }
 
 .shelf-book-compact .shelf-book-heading {
@@ -594,6 +594,7 @@ label {
 
 .shelf-book-compact .shelf-book-heading > strong {
   grid-column: 1;
+  text-align: left;
 }
 
 .shelf-book-compact .shelf-book-heading span {
@@ -604,7 +605,7 @@ label {
 
 .shelf-book-compact .shelf-book-heading h4 {
   display: -webkit-box;
-  font-size: 0.94rem;
+  font-size: 1rem;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -619,7 +620,12 @@ label {
 
 .shelf-book-compact .shelf-book-heading strong,
 .shelf-book-compact .book-dates {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
+}
+
+.shelf-book-compact .book-progress {
+  min-width: 0;
+  width: 100%;
 }
 
 .shelf-book-compact .book-dates {
@@ -1320,6 +1326,17 @@ label {
     grid-row: auto;
   }
 
+  .shelf-book-compact {
+    grid-template-columns: minmax(0, 1fr) auto;
+    height: 9.25rem;
+  }
+
+  .shelf-book-compact .book-progress,
+  .shelf-book-compact .book-dates,
+  .shelf-book-compact .book-card-link {
+    grid-column: 1 / -1;
+  }
+
   .quest-path {
     position: static;
     justify-content: center;
@@ -1359,10 +1376,6 @@ label {
 	  .goal-history-row,
 	  .report-summary {
     grid-template-columns: 1fr;
-  }
-
-  .finished-book-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .shelf-book-compact .book-dates {

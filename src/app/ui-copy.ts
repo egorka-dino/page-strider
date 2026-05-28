@@ -186,6 +186,7 @@ export const UI_COPY = {
     },
     pageProgress: (currentPage: number, totalPages: number) =>
       `Закладка: ${currentPage} из ${totalPages}`,
+    pagesRead: (pages: number) => `Прочитано: ${formatNumber(pages)} стр.`,
     progressLabel: (percent: number) => `Пройдено ${formatNumber(percent)}% маршрута`,
     startedDate: (date: string) => `Старт: ${formatDate(date)}`,
     finishedDate: (date: string) => `Финиш: ${formatDate(date)}`,

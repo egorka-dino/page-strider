@@ -155,6 +155,9 @@ function BookCard({
   const bookEntries = entries.filter((entry) => entry.bookId === book.id);
   const progress = calculateBookProgress(book);
   const progressPercent = Math.round(progress.progress * 100);
+  const progressSummary = compact
+    ? UI_COPY.books.pagesRead(progress.readPages)
+    : UI_COPY.books.pageProgress(book.currentPage, book.totalPages);
 
   const details = (
     <>
@@ -237,7 +240,7 @@ function BookCard({
           <h4>{book.title}</h4>
           <p className="muted">{book.author || UI_COPY.today.unknownAuthor}</p>
         </div>
-        <strong>{UI_COPY.books.pageProgress(book.currentPage, book.totalPages)}</strong>
+        <strong>{progressSummary}</strong>
       </div>
 
       <div className="book-progress" aria-label={UI_COPY.books.progressLabel(progressPercent)}>

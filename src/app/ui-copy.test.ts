@@ -37,6 +37,7 @@ describe("UI copy", () => {
       UI_COPY.books.copy,
       UI_COPY.books.activeTrailLabel,
       UI_COPY.books.progressLabel(42),
+      UI_COPY.books.pagesRead(120),
       UI_COPY.books.openArchiveCard,
       UI_COPY.books.backToShelf,
       UI_COPY.bookSetup.submitButton
