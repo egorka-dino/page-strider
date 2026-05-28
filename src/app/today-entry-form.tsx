@@ -21,18 +21,7 @@ export function TodayEntryForm({
 }: TodayEntryFormProps) {
   const [startPage, setStartPage] = useState(String(defaultStartPage));
   const [endPage, setEndPage] = useState("");
-  const [creditedPages, setCreditedPages] = useState("");
-
-  function suggestCreditedPages(nextStartPage: string, nextEndPage: string) {
-    const parsedStartPage = Number(nextStartPage);
-    const parsedEndPage = Number(nextEndPage);
-
-    if (Number.isFinite(parsedStartPage) && Number.isFinite(parsedEndPage)) {
-      const suggestedPages = calculatePagesRead(parsedStartPage, parsedEndPage);
-
-      setCreditedPages(suggestedPages > 0 ? String(suggestedPages) : "");
-    }
-  }
+  const creditedPages = calculateCreditedPagesInputValue(startPage, endPage);
 
   return (
     <form action={action} className="stacked-form">
@@ -46,7 +35,6 @@ export function TodayEntryForm({
           value={startPage}
           onChange={(event) => {
             setStartPage(event.target.value);
-            suggestCreditedPages(event.target.value, endPage);
           }}
         />
       </label>
@@ -60,7 +48,6 @@ export function TodayEntryForm({
           value={endPage}
           onChange={(event) => {
             setEndPage(event.target.value);
-            suggestCreditedPages(startPage, event.target.value);
           }}
         />
       </label>
@@ -71,7 +58,7 @@ export function TodayEntryForm({
           type="number"
           min="1"
           value={creditedPages}
-          onChange={(event) => setCreditedPages(event.target.value)}
+          readOnly
           required
         />
       </label>
@@ -84,4 +71,21 @@ export function TodayEntryForm({
       <button type="submit">{UI_COPY.today.saveButton}</button>
     </form>
   );
+}
+
+export function calculateCreditedPagesInputValue(startPage: string, endPage: string): string {
+  if (startPage.trim() === "" || endPage.trim() === "") {
+    return "";
+  }
+
+  const parsedStartPage = Number(startPage);
+  const parsedEndPage = Number(endPage);
+
+  if (!Number.isFinite(parsedStartPage) || !Number.isFinite(parsedEndPage)) {
+    return "";
+  }
+
+  const pagesRead = calculatePagesRead(parsedStartPage, parsedEndPage);
+
+  return pagesRead > 0 ? String(pagesRead) : "";
 }
