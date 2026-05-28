@@ -5,6 +5,7 @@ import {
   deleteReadingEntryAction,
   updateReadingEntryAction
 } from "./actions";
+import { PageRouteFields } from "./page-route-fields";
 import { parseIsoDate } from "./page-utils";
 import { UI_COPY } from "./ui-copy";
 
@@ -235,18 +236,11 @@ function HistoryEntryCreate({ books, date }: { books: Book[]; date: string }) {
             ))}
           </select>
         </label>
-        <label>
-          {UI_COPY.history.correctionStartPageLabel}
-          <input name="startPage" type="number" min="1" />
-        </label>
-        <label>
-          {UI_COPY.history.correctionEndPageLabel}
-          <input name="endPage" type="number" min="1" />
-        </label>
-        <label>
-          {UI_COPY.history.correctionCreditedPagesLabel}
-          <input name="creditedPages" type="number" min="1" required />
-        </label>
+        <PageRouteFields
+          creditedPagesLabel={UI_COPY.history.correctionCreditedPagesLabel}
+          endPageLabel={UI_COPY.history.correctionEndPageLabel}
+          startPageLabel={UI_COPY.history.correctionStartPageLabel}
+        />
         <label className="wide-field">
           {UI_COPY.history.correctionNoteLabel}
           <textarea name="note" rows={2} />
@@ -267,29 +261,13 @@ function HistoryCorrection({ entry }: { entry: ReadingEntry }) {
           {UI_COPY.history.correctionDateLabel}
           <input name="date" type="date" defaultValue={entry.date} required />
         </label>
-        <label>
-          {UI_COPY.history.correctionStartPageLabel}
-          <input
-            name="startPage"
-            type="number"
-            min="1"
-            defaultValue={entry.startPage ?? ""}
-          />
-        </label>
-        <label>
-          {UI_COPY.history.correctionEndPageLabel}
-          <input name="endPage" type="number" min="1" defaultValue={entry.endPage ?? ""} />
-        </label>
-        <label>
-          {UI_COPY.history.correctionCreditedPagesLabel}
-          <input
-            name="creditedPages"
-            type="number"
-            min="1"
-            defaultValue={entry.creditedPages}
-            required
-          />
-        </label>
+        <PageRouteFields
+          creditedPagesLabel={UI_COPY.history.correctionCreditedPagesLabel}
+          defaultEndPage={entry.endPage}
+          defaultStartPage={entry.startPage}
+          endPageLabel={UI_COPY.history.correctionEndPageLabel}
+          startPageLabel={UI_COPY.history.correctionStartPageLabel}
+        />
         <label className="wide-field">
           {UI_COPY.history.correctionNoteLabel}
           <textarea name="note" rows={2} defaultValue={entry.note ?? ""} />

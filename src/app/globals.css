@@ -380,6 +380,10 @@ label {
   align-self: end;
 }
 
+.page-route-fields {
+  display: contents;
+}
+
 .history-panel,
 .progress-panel,
 .books-panel,
