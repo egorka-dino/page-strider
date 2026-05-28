@@ -266,6 +266,20 @@ class SupabaseReadingEntryRepository implements ReadingEntryRepository {
     return data ? mapReadingEntry(data) : null;
   }
 
+  async getEntryById(id: string): Promise<ReadingEntry | null> {
+    const { data, error } = await this.supabase
+      .from("reading_entries")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return data ? mapReadingEntry(data) : null;
+  }
+
   async upsertEntry(entry: Omit<ReadingEntry, "id">): Promise<ReadingEntry> {
     const { data, error } = await this.supabase
       .from("reading_entries")
@@ -291,6 +305,42 @@ class SupabaseReadingEntryRepository implements ReadingEntryRepository {
     }
 
     return mapReadingEntry(data);
+  }
+
+  async updateEntry(entry: ReadingEntry): Promise<ReadingEntry> {
+    const { data, error } = await this.supabase
+      .from("reading_entries")
+      .update({
+        date: entry.date,
+        book_id: entry.bookId,
+        book_title: entry.bookTitle,
+        start_page: entry.startPage,
+        end_page: entry.endPage,
+        pages_read: entry.creditedPages,
+        daily_goal_pages: entry.dailyGoalPages,
+        note: entry.note ?? null,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", entry.id)
+      .select("*")
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapReadingEntry(data);
+  }
+
+  async deleteEntry(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from("reading_entries")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      throw error;
+    }
   }
 }
 

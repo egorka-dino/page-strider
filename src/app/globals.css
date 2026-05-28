@@ -1043,6 +1043,51 @@ label {
   margin: 0;
 }
 
+.history-correction {
+  border-top: 1px dashed color-mix(in srgb, var(--day-color) 42%, var(--ps-ink) 10%);
+  padding-top: 0.65rem;
+}
+
+.history-correction summary {
+  color: color-mix(in srgb, var(--day-color) 68%, var(--ps-ink));
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.history-correction-form {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.75rem;
+}
+
+.history-correction-form .wide-field,
+.history-correction-form button {
+  grid-column: 1 / -1;
+}
+
+.history-delete-form {
+  align-items: center;
+  border-top: 1px solid color-mix(in srgb, var(--ps-ink) 10%, transparent);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.history-delete-form p {
+  color: var(--ps-muted-ink);
+  flex: 1 1 14rem;
+  font-size: 0.88rem;
+}
+
+.history-delete-form button {
+  background: linear-gradient(135deg, var(--ps-badge), color-mix(in srgb, var(--ps-badge) 68%, var(--ps-warning)));
+}
+
 .history-empty {
   background: color-mix(in srgb, var(--ps-spark) 13%, var(--ps-paper));
   border: 1px dashed color-mix(in srgb, var(--ps-spark) 55%, var(--ps-ink) 12%);
@@ -1296,6 +1341,7 @@ label {
 	  .books-route-grid,
 	  .daily-goal-grid,
 	  .goal-form,
+  .history-correction-form,
 	  .goal-history-row,
 	  .report-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1309,6 +1355,7 @@ label {
 	  .books-route-grid,
 	  .daily-goal-grid,
 	  .goal-form,
+  .history-correction-form,
 	  .goal-history-row,
 	  .report-summary {
     grid-template-columns: 1fr;

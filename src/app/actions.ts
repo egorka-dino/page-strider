@@ -8,8 +8,10 @@ import {
   finishBook,
   normalizeDailyGoalInput,
   pauseBook,
+  prepareReadingEntryCorrection,
   prepareBookActivation,
-  prepareTodayReadingEntry
+  prepareTodayReadingEntry,
+  recalculateBookAfterEntryChange
 } from "@/domain";
 import { createSupabaseDataAccess } from "@/data";
 
@@ -221,6 +223,49 @@ export async function updateDailyGoalAction(formData: FormData): Promise<void> {
   redirect("/?message=goal_saved");
 }
 
+export async function updateReadingEntryAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const entry = await getEntryFromForm(data, formData);
+  const book = await data.books.getBookById(entry.bookId);
+  const targetDate = getString(formData, "date");
+  const [existingEntryOnTargetDate, dailyGoal] = await Promise.all([
+    targetDate ? data.entries.getEntryByDate(targetDate) : Promise.resolve(null),
+    data.goals.getDailyGoalForDate(targetDate || entry.date)
+  ]);
+  const result = prepareReadingEntryCorrection({
+    entry,
+    book,
+    targetDate,
+    dailyGoalPages: dailyGoal.pagesPerDay,
+    existingEntryOnTargetDate,
+    startPage: getOptionalNumber(formData, "startPage"),
+    endPage: getOptionalNumber(formData, "endPage"),
+    creditedPages: getNumber(formData, "creditedPages"),
+    note: getString(formData, "note")
+  });
+
+  if (!result.ok) {
+    redirectToJourneyWithError(result.error);
+  }
+
+  await data.entries.updateEntry(result.entry);
+  await updateBookAfterHistoryChange(data, result.entry.bookId);
+
+  revalidateAppRoutes(result.entry.bookId);
+  redirect("/journey?message=entry_updated");
+}
+
+export async function deleteReadingEntryAction(formData: FormData): Promise<void> {
+  const data = createSupabaseDataAccess();
+  const entry = await getEntryFromForm(data, formData);
+
+  await data.entries.deleteEntry(entry.id);
+  await updateBookAfterHistoryChange(data, entry.bookId);
+
+  revalidateAppRoutes(entry.bookId);
+  redirect("/journey?message=entry_deleted");
+}
+
 function getString(formData: FormData, key: string): string {
   const value = formData.get(key);
 
@@ -259,6 +304,49 @@ async function getBookFromForm(
   return book;
 }
 
+async function getEntryFromForm(
+  data: ReturnType<typeof createSupabaseDataAccess>,
+  formData: FormData
+) {
+  const entryId = getString(formData, "entryId");
+  const entry = entryId ? await data.entries.getEntryById(entryId) : null;
+
+  if (!entry) {
+    redirectToJourneyWithError("invalid_entry");
+  }
+
+  return entry;
+}
+
+async function updateBookAfterHistoryChange(
+  data: ReturnType<typeof createSupabaseDataAccess>,
+  bookId: string
+): Promise<void> {
+  const [book, entries] = await Promise.all([
+    data.books.getBookById(bookId),
+    data.entries.listEntries()
+  ]);
+
+  if (!book) {
+    redirectToJourneyWithError("invalid_book");
+  }
+
+  await data.books.updateBook(
+    recalculateBookAfterEntryChange(
+      book,
+      entries.filter((entry) => entry.bookId === book.id)
+    )
+  );
+}
+
+function revalidateAppRoutes(bookId: string): void {
+  revalidatePath("/");
+  revalidatePath("/journey");
+  revalidatePath("/books");
+  revalidatePath(`/books/${bookId}`);
+  revalidatePath("/report");
+}
+
 function getTodayIsoDate(): string {
   const timeZone = process.env.PAGESTRIDER_TIME_ZONE ?? "Europe/Minsk";
   const parts = new Intl.DateTimeFormat("en", {
@@ -280,4 +368,8 @@ function getTodayIsoDate(): string {
 
 function redirectWithError(error: string): never {
   redirect(`/?error=${encodeURIComponent(error)}`);
+}
+
+function redirectToJourneyWithError(error: string): never {
+  redirect(`/journey?error=${encodeURIComponent(error)}`);
 }
