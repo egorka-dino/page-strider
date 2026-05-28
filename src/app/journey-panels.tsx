@@ -1,5 +1,6 @@
 import type { Badge, ReadingHistoryDay, ReadingMetrics, ReadingEntry } from "@/domain";
 
+import { deleteReadingEntryAction, updateReadingEntryAction } from "./actions";
 import { parseIsoDate } from "./page-utils";
 import { UI_COPY } from "./ui-copy";
 
@@ -178,29 +179,80 @@ function DayDetail({ day }: { day: ReadingHistoryDay }) {
         <span>{status}</span>
       </div>
       {day.entry ? (
-        <dl>
-          <div>
-            <dt>{UI_COPY.history.bookLabel}</dt>
-            <dd>{day.entry.bookTitle}</dd>
-          </div>
-          <div>
-            <dt>{UI_COPY.history.pagesLabel}</dt>
-            <dd>
-              {formatHistoryBookmark(day.entry)} ·{" "}
-              {UI_COPY.history.creditedPages(day.entry.creditedPages)}
-            </dd>
-          </div>
-          {day.entry.note ? (
+        <>
+          <dl>
             <div>
-              <dt>{UI_COPY.history.noteLabel}</dt>
-              <dd>{day.entry.note}</dd>
+              <dt>{UI_COPY.history.bookLabel}</dt>
+              <dd>{day.entry.bookTitle}</dd>
             </div>
-          ) : null}
-        </dl>
+            <div>
+              <dt>{UI_COPY.history.pagesLabel}</dt>
+              <dd>
+                {formatHistoryBookmark(day.entry)} ·{" "}
+                {UI_COPY.history.creditedPages(day.entry.creditedPages)}
+              </dd>
+            </div>
+            {day.entry.note ? (
+              <div>
+                <dt>{UI_COPY.history.noteLabel}</dt>
+                <dd>{day.entry.note}</dd>
+              </div>
+            ) : null}
+          </dl>
+          <HistoryCorrection entry={day.entry} />
+        </>
       ) : (
         <p>{UI_COPY.history.emptyDayDetail}</p>
       )}
     </article>
+  );
+}
+
+function HistoryCorrection({ entry }: { entry: ReadingEntry }) {
+  return (
+    <details className="history-correction">
+      <summary>{UI_COPY.history.correctionHeading}</summary>
+      <form action={updateReadingEntryAction} className="history-correction-form">
+        <input name="entryId" type="hidden" value={entry.id} />
+        <label>
+          {UI_COPY.history.correctionDateLabel}
+          <input name="date" type="date" defaultValue={entry.date} required />
+        </label>
+        <label>
+          {UI_COPY.history.correctionStartPageLabel}
+          <input
+            name="startPage"
+            type="number"
+            min="1"
+            defaultValue={entry.startPage ?? ""}
+          />
+        </label>
+        <label>
+          {UI_COPY.history.correctionEndPageLabel}
+          <input name="endPage" type="number" min="1" defaultValue={entry.endPage ?? ""} />
+        </label>
+        <label>
+          {UI_COPY.history.correctionCreditedPagesLabel}
+          <input
+            name="creditedPages"
+            type="number"
+            min="1"
+            defaultValue={entry.creditedPages}
+            required
+          />
+        </label>
+        <label className="wide-field">
+          {UI_COPY.history.correctionNoteLabel}
+          <textarea name="note" rows={2} defaultValue={entry.note ?? ""} />
+        </label>
+        <button type="submit">{UI_COPY.history.correctionSaveButton}</button>
+      </form>
+      <form action={deleteReadingEntryAction} className="history-delete-form">
+        <input name="entryId" type="hidden" value={entry.id} />
+        <p>{UI_COPY.history.correctionDeleteHint}</p>
+        <button type="submit">{UI_COPY.history.correctionDeleteButton}</button>
+      </form>
+    </details>
   );
 }
 

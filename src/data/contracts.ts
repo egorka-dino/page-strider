@@ -28,8 +28,11 @@ export interface BookRepository {
 
 export interface ReadingEntryRepository {
   listEntries(range?: DateRange): Promise<ReadingEntry[]>;
+  getEntryById(id: string): Promise<ReadingEntry | null>;
   getEntryByDate(date: string): Promise<ReadingEntry | null>;
   upsertEntry(entry: Omit<ReadingEntry, "id">): Promise<ReadingEntry>;
+  updateEntry(entry: ReadingEntry): Promise<ReadingEntry>;
+  deleteEntry(id: string): Promise<void>;
 }
 
 export interface DailyGoalRepository {

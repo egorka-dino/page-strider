@@ -22,6 +22,8 @@ export const UI_COPY = {
   messages: {
     bookCreated: "Книга добавлена. Первый квест готов!",
     entrySaved: "Квест дня сохранен. Отличный шаг!",
+    entryUpdated: "Шаг в истории исправлен. Маршрут снова ровный!",
+    entryDeleted: "Ошибочная отметка удалена из маршрута.",
     bookUpdated: "Детали книги обновлены.",
     bookPaused: "Книга ждет на паузе. Можно выбрать следующий маршрут.",
     bookActivated: "Книга снова активна. Маршрут продолжен!",
@@ -37,6 +39,8 @@ export const UI_COPY = {
     endBeforeStart: "Финиш шага должен быть после последней уже прочитанной страницы.",
     endAfterTotal: "Финиш шага не может быть дальше конца книги.",
     invalidBook: "Перед стартом нужны корректные данные книги.",
+    invalidEntry: "Не удалось найти эту отметку истории.",
+    invalidEntryDate: "Выберите корректную дату для отметки истории.",
     bookFinished: "Завершенную книгу нельзя снова сделать активной.",
     invalidGoalPages: "Укажите целое число страниц больше нуля.",
     invalidGoalDate: "Выберите корректную дату начала цели.",
@@ -107,7 +111,16 @@ export const UI_COPY = {
       legendary: "легендарный день"
     },
     emptyDayDetail: "В этот день маршрут отдыхал. Следующая отметка может стать новой главой.",
-    noteLabel: "Заметка"
+    noteLabel: "Заметка",
+    correctionHeading: "Исправить шаг",
+    correctionDateLabel: "Дата",
+    correctionStartPageLabel: "Страница начала",
+    correctionEndPageLabel: "Где остановились",
+    correctionCreditedPagesLabel: "Засчитать страниц",
+    correctionNoteLabel: "Заметка",
+    correctionSaveButton: "Сохранить исправление",
+    correctionDeleteButton: "Удалить отметку",
+    correctionDeleteHint: "Если шаг попал в историю случайно, его можно убрать."
   },
   progress: {
     eyebrow: "Сила маршрута",
