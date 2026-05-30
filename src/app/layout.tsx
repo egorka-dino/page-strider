@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import { PAGE_ROUTE_FIELDS_SCRIPT } from "./page-route-fields-script";
 import { UI_COPY } from "./ui-copy";
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        {children}
+        <script dangerouslySetInnerHTML={{ __html: PAGE_ROUTE_FIELDS_SCRIPT }} />
+      </body>
     </html>
   );
 }
